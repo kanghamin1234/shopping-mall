@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luxury Lobby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* 기본 스타일 초기화 */
+        body {
+            font-family: 'Montserrat', sans-serif; /* 변경된 폰트 */
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            color: #333;
+            background-color: #fdfdfd; /* 약간 부드러운 흰색 배경 */
+        }
+        
+        /* 헤더 스타일 */
+        header {
+            background-color: #1a1a1a; /* 더 깊은 검정색 */
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444; /* 하단 경계선 추가 */
+        }
+
+        /* 제목 폰트 스타일 */
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif; /* 제목용 폰트 */
+        }
+        
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+            margin: 0;
+            padding: 0;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease; /* 부드러운 전환 효과 */
+        }
+
+        nav a:hover {
+            color: #e0c280; /* 호버 시 골드 색상 */
+        }
+
+        /* 메인 배너 (Hero) 스타일 */
+        .hero {
+            background: linear-gradient(to right, #232526, #414345); /* 그라데이션 배경 */
+            color: white;
+            padding: 80px 20px; /* 패딩 증가 */
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .hero h2 {
+            font-size: 3rem; /* 폰트 크기 증가 */
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5); /* 텍스트 그림자 */
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+
+        /* 공통 컨테이너 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* 상품 목록 그리드 스타일 */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 35px;
+            margin-bottom: 50px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #eee; /* 테두리 색상 변경 */
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* 전환 효과 시간 조정 */
+            overflow: hidden; /* 이미지 모서리 둥글게 하기 위해 */
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px); /* 호버 효과 강화 */
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12); /* 그림자 강화 */
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            transition: transform 0.3s ease; /* 이미지 줌 효과 */
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05); /* 호버 시 이미지 확대 */
+        }
+
+        .product-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        /* 버튼 스타일 */
+        .btn {
+            background-color: #333; /* 버튼 기본 색상 변경 */
+            color: white;
+            border: none;
+            padding: 12px 24px; /* 패딩 조정 */
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-transform: uppercase; /* 대문자 변환 */
+            letter-spacing: 1px; /* 자간 조정 */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* 전환 효과 추가 */
+        }
+        .btn:hover {
+            background-color: #e0c280; /* 호버 시 골드 색상 */
+            color: #333;
+            transform: translateY(-2px);
+        }
+
+        /* 푸터 스타일 */
+        footer {
+            background-color: #1a1a1a; /* 헤더와 동일하게 변경 */
+            color: #aaa; /* 폰트 색상 변경 */
+            text-align: center;
+            padding: 20px;
+            margin-top: auto;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Luxury Lobby</h1>
+        <nav>
+            <ul>
+                <li><a href="#" onclick="alert('This page is under construction.');">Home</a></li>
+                <li><a href="#" onclick="alert('This page is under construction.');">Best</a></li>
+                <li><a href="#" onclick="alert('This page is under construction.');">New Arrivals</a></li>
+                <li id="mypage-link-li" style="display: none;"><a href="mypage.html">My Page</a></li>
+                <li id="cart-link-li" style="display: none;"><a href="cart.html">Cart</a></li>
+                <li><a href="login.html" id="login-link">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h2>New arrivals this season!</h2>
+        <p>Find your perfect match among our latest collection!</p>
+        <button class="btn" onclick="alert('This page is under construction.');">Go Shopping -></button>
+    </section>
+
+    <div class="container">
+        <h3 style="text-align: center; margin-bottom: 30px;">🔥This Month's Recommendation for you!🔥</h3>
+        <div class="product-grid">
+            <!-- 상품 카드가 동적으로 삽입됩니다. -->
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026. Luxury Lobby. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // 상품 데이터 (중앙 데이터 소스 역할)
+        const products = [
+            { id: 'P001', name: 'Supreme Box Logo Hoodie', price: 650, img: "C:\\Users\\praza\\Downloads\\supremehoodie.png" },
+            { id: 'P002', name: 'Stussy Washed Jeans', price: 500, img: "C:\\Users\\praza\\Downloads\\stussy.png" },
+            { id: 'P003', name: 'Burberry Jacket', price: 5000, img: "C:\\Users\\praza\\Downloads\\burberry.png" },
+            { id: 'P004', name: 'Balenciaga Sneakers', price: 1400, img: "C:\\Users\\praza\\Downloads\\balenciagasneakers.png" },
+            { id: 'P005', name: 'Saint Laurent Handbag', price: 2500, img: "C:\\Users\\praza\\Downloads\\SaintLaurenthandbag.png"},
+            { id: 'P006', name: 'Gucci Wallet', price: 450, img: "C:\\Users\\praza\\Downloads\\gucciwallet.png" },
+            { id: 'P007', name: 'Louis Vuitton Birkin bag', price: 2900, img: "C:\\Users\\praza\\Downloads\\lvbirkin.png"},
+            { id: 'P008', name: 'Dior Shirt', price: 1250, img: "C:\\Users\\praza\\Downloads\\diorshirt.png"}
+        ];
+
+        // 다른 페이지에서 상품 데이터를 사용할 수 있도록 로컬 스토리지에 저장
+        localStorage.setItem('products', JSON.stringify(products));
+
+        // 페이지 로드 시 상품 목록 렌더링
+        window.addEventListener('DOMContentLoaded', () => {
+            const productGrid = document.querySelector('.product-grid');
+            productGrid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <a href="product_detail.html?id=${p.id}" style="text-decoration: none; color: inherit;">
+                        <img src="${p.img}" alt="${p.name}">
+                        <h4>${p.name}</h4>
+                    </a>
+                    <p>$${p.price.toLocaleString()}</p>
+                    <button class="btn" onclick="addToCart('${p.id}')">add to cart</button>
+                </div>
+            `).join('');
+        });
+
+        // 로그인 상태 확인 및 로그아웃 기능
+        const currentUser = localStorage.getItem('currentUser');
+        const loginLink = document.getElementById('login-link');
+        const mypageLinkLi = document.getElementById('mypage-link-li');
+        const cartLinkLi = document.getElementById('cart-link-li');
+
+        if (currentUser) {
+            loginLink.textContent = 'Logout (' + currentUser + ')';
+            loginLink.href = '#';
+            mypageLinkLi.style.display = 'list-item'; // 로그인 시 My Page 버튼 표시
+            cartLinkLi.style.display = 'list-item'; // 로그인 시 Cart 버튼 표시
+            loginLink.onclick = function() {
+                localStorage.removeItem('currentUser');
+                alert('Logged out.');
+                location.reload();
+            };
+        }
+
+        function addToCart(productId) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                alert('Please log in to add items to your cart.');
+                location.href = 'login.html';
+                return;
+            }
+            
+            // 로컬 스토리지에서 전체 상품 목록 가져오기
+            const allProducts = JSON.parse(localStorage.getItem('products')) || [];
+            const productToAdd = allProducts.find(p => p.id === productId);
+
+            let cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const existingItem = cart.find(item => item.id === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                // 상품 정보 전체를 장바구니에 추가
+                cart.push({ ...productToAdd, quantity: 1 });
+            }
+
+            localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
+            alert('Successfully added to cart!');
+        }
+    </script>
+</body>
+</html>
+    
