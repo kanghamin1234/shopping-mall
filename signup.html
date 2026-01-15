@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Luxury Lobby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to right, #232526, #414345);
+        }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #333; }
+        .signup-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input:focus {
+            outline: none;
+            border-color: #e0c280;
+            box-shadow: 0 0 0 2px rgba(224, 194, 128, 0.2);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover { background-color: #e0c280; color: #333; }
+        .back-link { margin-top: 20px; display: block; color: #555; text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.3s ease; }
+        .back-link:hover { color: #e0c280; }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <input type="text" placeholder="ID" id="new-id">
+        <input type="password" placeholder="Password" id="new-pw">
+        <input type="password" placeholder="Confirm Password" id="confirm-pw">
+        <input type="text" placeholder="Name" id="new-name">
+        <input type="email" placeholder="Email" id="new-email">
+        <button onclick="signup()">Sign Up</button>
+        <a href="login.html" class="back-link">Already have an account? Back to Login.</a>
+    </div>
+
+    <script>
+        function signup() {
+            const id = document.getElementById('new-id').value;
+            const pw = document.getElementById('new-pw').value;
+            const confirmPw = document.getElementById('confirm-pw').value;
+            const name = document.getElementById('new-name').value;
+            const email = document.getElementById('new-email').value;
+
+            if(id && pw && name && email) {
+                // 비밀번호 일치 여부 확인
+                if (pw !== confirmPw) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+
+                // 이미 존재하는 아이디인지 확인
+                if (localStorage.getItem(id)) {
+                    alert('User ID already exists.');
+                    return;
+                }
+
+                // 이미 가입된 이메일인지 확인
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key === 'currentUser') continue; // 현재 로그인 세션 키 제외
+                    const storedUser = JSON.parse(localStorage.getItem(key));
+                    if (storedUser && storedUser.email === email) {
+                        alert('Email already exists.');
+                        return;
+                    }
+                }
+
+                // 로컬 스토리지에 사용자 정보 저장 (서버 대용)
+                localStorage.setItem(id, JSON.stringify({ pw: pw, name: name, email: email }));
+
+                alert('Sign up successful, ' + name + '!' + ' Please log in.');
+                // 가입 완료 시 로그인 페이지로 이동
+                location.href = 'login.html';
+            } else {
+                alert('Please fill in all information.');
+            }
+        }
+    </script>
+</body>
+</html>

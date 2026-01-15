@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Luxury Lobby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fdfdfd;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+        .cart-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+        h2 { text-align: center; margin-bottom: 40px; font-size: 2.5rem; }
+        .cart-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 20px 0; }
+        .cart-item img { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; margin-right: 20px; }
+        .item-details { flex-grow: 1; }
+        .item-details h4 { margin: 0 0 10px; }
+        .quantity-controls { display: flex; align-items: center; }
+        .quantity-controls button {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            background: white;
+            transition: background-color 0.2s;
+        }
+        .quantity-controls button:hover { background-color: #f5f5f5; }
+        .quantity-controls span { padding: 0 15px; font-weight: bold; }
+        .item-price { font-weight: bold; min-width: 100px; text-align: right; }
+        .delete-item {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1.5rem;
+            margin-left: 20px;
+            transition: color 0.3s ease;
+        }
+        .delete-item:hover { color: #e0c280; }
+        .cart-summary { text-align: right; margin-top: 30px; }
+        .total-price { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; }
+        .order-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .order-btn:hover { background-color: #e0c280; color: #333; transform: translateY(-2px); }
+        .empty-cart, .back-link { text-align: center; margin-top: 20px; display: block; color: #666; text-decoration: none; transition: color 0.3s ease; }
+        .back-link:hover { color: #e0c280; }
+    </style>
+</head>
+<body>
+    <div class="cart-container">
+        <h2>Shopping Cart</h2>
+        <div id="cart-items-list">
+            <!-- Cart items will be dynamically inserted here -->
+        </div>
+        <div id="cart-summary-section" style="display: none;">
+            <div class="cart-summary">
+                <div class="total-price" id="total-price-display">Total: $0</div>
+                <button class="order-btn" onclick="checkout()">Order Now</button>
+            </div>
+        </div>
+        <div id="order-success" style="display: none; text-align: center; padding: 40px 0;">
+            <h3 style="color: #28a745; margin-bottom: 20px;">Order Placed Successfully!</h3>
+            <p style="margin-bottom: 30px;">Thank you for your purchase.</p>
+            <button class="order-btn" onclick="location.href='order_history.html'" style="margin-right: 10px; background-color: #555;">View Order History</button>
+            <button class="order-btn" onclick="location.href='Shoppingmall1.html'">Go to Main Page</button>
+        </div>
+        <a href="Shoppingmall1.html" class="back-link">Continue Shopping</a>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        const cartItemsList = document.getElementById('cart-items-list');
+        const cartSummarySection = document.getElementById('cart-summary-section');
+        const totalPriceDisplay = document.getElementById('total-price-display');
+
+        window.onload = function() {
+            if (!currentUser) {
+                alert('Please log in to view your cart.');
+                location.href = 'login.html';
+                return;
+            }
+            renderCart();
+        };
+
+        function renderCart() {
+            const cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            cartItemsList.innerHTML = '';
+            let total = 0;
+
+            if (cart.length === 0) {
+                cartItemsList.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
+                cartSummarySection.style.display = 'none';
+                return;
+            }
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                cartItemsList.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.img}" alt="${item.name}">
+                        <div class="item-details">
+                            <h4>${item.name}</h4>
+                            <div class="quantity-controls">
+                                <button onclick="updateQuantity('${item.id}', -1)">-</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="updateQuantity('${item.id}', 1)">+</button>
+                            </div>
+                        </div>
+                        <div class="item-price">$${itemTotal.toLocaleString()}</div>
+                        <button class="delete-item" onclick="removeFromCart('${item.id}')">&times;</button>
+                    </div>
+                `;
+            });
+
+            totalPriceDisplay.textContent = `Total: $${total.toLocaleString()}`;
+            cartSummarySection.style.display = 'block';
+        }
+
+        function updateQuantity(itemId, change) {
+            let cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const itemIndex = cart.findIndex(item => item.id === itemId);
+
+            if (itemIndex > -1) {
+                cart[itemIndex].quantity += change;
+                if (cart[itemIndex].quantity <= 0) {
+                    cart.splice(itemIndex, 1); // Remove item if quantity is 0 or less
+                }
+            }
+
+            localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
+            renderCart();
+        }
+
+        function removeFromCart(itemId) {
+            let cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const updatedCart = cart.filter(item => item.id !== itemId);
+            localStorage.setItem('cart_' + currentUser, JSON.stringify(updatedCart));
+            renderCart();
+        }
+
+        function checkout() {
+            const cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            if (cart.length === 0) {
+                alert("Your cart is empty.");
+                return;
+            }
+
+            let orderHistory = JSON.parse(localStorage.getItem('orders_' + currentUser)) || [];
+            const newOrder = {
+                orderId: 'ORD-' + new Date().getTime(),
+                date: new Date().toLocaleString('ko-KR'),
+                items: cart,
+                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                status: 'Completed' // 주문 상태 추가
+            };
+
+            orderHistory.push(newOrder);
+            localStorage.setItem('orders_' + currentUser, JSON.stringify(orderHistory));
+            localStorage.removeItem('cart_' + currentUser);
+
+            document.getElementById('cart-items-list').style.display = 'none';
+            document.getElementById('cart-summary-section').style.display = 'none';
+            document.querySelector('.back-link').style.display = 'none';
+            document.querySelector('h2').textContent = 'Order Complete';
+            document.getElementById('order-success').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

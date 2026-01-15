@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Product to Review - Luxury Lobby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #fdfdfd;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h2, h4 {
+            font-family: 'Playfair Display', serif;
+        }
+        .container { max-width: 900px; margin: 40px auto; background: white; padding: 40px; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
+        h2 { text-align: center; margin-bottom: 40px; font-size: 2.5rem; }
+        .product-list-item { display: flex; align-items: center; border-bottom: 1px solid #eee; padding: 15px 0; }
+        .product-list-item:last-child { border-bottom: none; }
+        .product-list-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; margin-right: 20px; }
+        .item-details { flex-grow: 1; }
+        .review-btn {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: background-color 0.3s ease;
+        }
+        .review-btn:hover { background-color: #e0c280; color: #333; }
+        .review-btn.edit {
+            background-color: white;
+            color: #333;
+            border: 1px solid #333;
+        }
+        .review-btn.edit:hover { background-color: #333; color: white; }
+        .no-items, .back-link { text-align: center; margin-top: 20px; display: block; color: #666; text-decoration: none; transition: color 0.3s ease; }
+        .back-link:hover { color: #e0c280; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Select Product to Review</h2>
+        <div id="purchased-items-list">
+            <!-- Purchased items will be dynamically inserted here -->
+        </div>
+        <a href="mypage.html" class="back-link">Back to My Page</a>
+    </div>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        const purchasedItemsList = document.getElementById('purchased-items-list');
+
+        window.onload = function() {
+            if (!currentUser) {
+                alert('Please log in to write a review.');
+                location.href = 'login.html';
+                return;
+            }
+            renderPurchasedItems();
+        };
+
+        function renderPurchasedItems() {
+            const orders = JSON.parse(localStorage.getItem('orders_' + currentUser)) || [];
+            const purchasedItems = new Map(); // Use a Map to store unique products
+
+            if (orders.length === 0) {
+                purchasedItemsList.innerHTML = '<p class="no-items">You have not purchased any items yet.</p>';
+                return;
+            }
+
+            // Collect all unique items from all orders
+            orders.forEach(order => {
+                order.items.forEach(item => {
+                    if (!purchasedItems.has(item.id)) {
+                        purchasedItems.set(item.id, item);
+                    }
+                });
+            });
+
+            if (purchasedItems.size === 0) {
+                purchasedItemsList.innerHTML = '<p class="no-items">You have not purchased any items yet.</p>';
+                return;
+            }
+
+            purchasedItems.forEach(item => {
+                const reviews = JSON.parse(localStorage.getItem('reviews_' + item.id)) || [];
+                const userHasReviewed = reviews.some(review => review.author === currentUser);
+                const buttonText = userHasReviewed ? 'Edit Review' : 'Write Review';
+                const buttonClass = userHasReviewed ? 'review-btn edit' : 'review-btn';
+
+                purchasedItemsList.innerHTML += `
+                    <div class="product-list-item">
+                        <img src="${item.img}" alt="${item.name}">
+                        <div class="item-details"><h4>${item.name}</h4></div>
+                        <a href="write_review.html?productId=${item.id}" class="${buttonClass}">${buttonText}</a>
+                    </div>
+                `;
+            });
+        }
+    </script>
+</body>
+</html>
