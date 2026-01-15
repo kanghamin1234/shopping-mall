@@ -54,14 +54,14 @@
         <button onclick="location.href='select_review_product.html'">Product Review</button>
         <button onclick="location.href='edit_info.html'">Edit My Info</button>
         <button class="delete-btn" onclick="deleteAccount()">Delete Account</button>
-        <a href="Shoppingmall1.html" class="back-link">Back to Main Page</a>
+        <a href="index.html" class="back-link">Back to Main Page</a>
     </div>
 
     <script>
         // 페이지 로드 시 로그인 상태가 아니면 메인으로 돌려보냄
         if (!localStorage.getItem('currentUser')) {
             alert('This page can only be accessed by logged-in users.');
-            location.href = 'Shoppingmall1.html';
+            location.href = 'index.html';
         }
 
         function deleteAccount() {
@@ -70,9 +70,10 @@
                 localStorage.removeItem(currentUser); // 회원 정보 삭제
                 localStorage.removeItem('currentUser'); // 로그인 세션 삭제
                 alert('Account has been successfully deleted.');
-                location.href = 'Shoppingmall1.html';
+                location.href = 'index.html';
             }
         }
     </script>
 </body>
+
 </html>
