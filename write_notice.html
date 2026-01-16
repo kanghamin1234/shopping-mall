@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write Notice - Luxury Lobby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #fdfdfd;
+        }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 20px; }
+        .write-container { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); width: 500px; }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            box-sizing: border-box;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #e0c280;
+        }
+        textarea { height: 200px; resize: vertical; }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover { background-color: #e0c280; color: #333; }
+        
+        .back-link { margin-top: 20px; display: block; text-align: center; color: #666; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
+        .back-link:hover { color: #e0c280; }
+    </style>
+</head>
+<body>
+    <div class="write-container">
+        <h2>Write Notice</h2>
+        <input type="text" id="notice-title" placeholder="Title">
+        <select id="notice-badge">
+            <option value="Notice">Notice</option>
+            <option value="Important">Important</option>
+            <option value="Event">Event</option>
+            <option value="System">System</option>
+        </select>
+        <textarea id="notice-content" placeholder="Content"></textarea>
+        <button onclick="saveNotice()">Post Notice</button>
+        <a href="notice.html" class="back-link">Back to Notices</a>
+    </div>
+
+    <script>
+        // 관리자 권한 확인
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser !== 'admin') {
+            alert('Access denied. Administrator only.');
+            location.href = 'notice.html';
+        }
+
+        function saveNotice() {
+            const title = document.getElementById('notice-title').value;
+            const badge = document.getElementById('notice-badge').value;
+            let content = document.getElementById('notice-content').value;
+
+            if (!title || !content) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            // 줄바꿈을 <br> 태그로 변환
+            content = content.replace(/\n/g, '<br>');
+
+            const newNotice = {
+                title: title,
+                badge: badge,
+                content: content,
+                date: new Date().toLocaleDateString('ko-KR') // 현재 날짜
+            };
+
+            // 로컬 스토리지에 저장
+            let notices = JSON.parse(localStorage.getItem('notices')) || [];
+            notices.push(newNotice);
+            localStorage.setItem('notices', JSON.stringify(notices));
+
+            alert('Notice posted successfully!');
+            location.href = 'notice.html';
+        }
+    </script>
+</body>
+</html>
