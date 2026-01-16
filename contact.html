@@ -235,7 +235,7 @@
             loginLink.onclick = function() {
                 localStorage.removeItem('currentUser');
                 alert('Logged out.');
-                location.reload();
+                location.href = 'index.html';
             };
 
             // 로그인한 경우 사용자 정보 자동 입력
