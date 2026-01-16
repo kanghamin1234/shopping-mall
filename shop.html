@@ -124,21 +124,6 @@
         // 2. 상품 데이터 가져오기
         let products = JSON.parse(localStorage.getItem('products')) || [];
 
-        // [테스트용 코드] 상품이 20개 미만이면 페이지네이션 확인을 위해 더미 데이터를 생성합니다.
-        // 나중에 실제 상품이 충분히 쌓이면 이 if문 블록을 삭제하세요.
-        if (products.length > 0 && products.length < 60) {
-            const originalLength = products.length;
-            for (let i = 1; i <= 50; i++) {
-                // 기존 상품 중 하나를 복사해서 더미로 추가
-                const sourceProduct = products[i % originalLength];
-                products.push({
-                    ...sourceProduct,
-                    id: 'TEMP_' + i, // 고유 ID 생성
-                    name: sourceProduct.name + ' (Ver.' + i + ')'
-                });
-            }
-        }
-
         // 3. 현재 페이지에 해당하는 상품 계산
         const totalItems = products.length;
         const totalPages = Math.ceil(totalItems / itemsPerPage);
