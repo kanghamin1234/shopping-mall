@@ -80,6 +80,24 @@
         .review-date { font-size: 0.9rem; color: #888; }
         .star-rating { color: #e0c280; } /* Gold color for stars */
         .no-reviews { text-align: center; color: #888; }
+
+        /* 관련 상품 섹션 스타일 */
+        .related-products-section { margin-top: 50px; border-top: 1px solid #eee; padding-top: 30px; }
+        .related-products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+        .related-product-card { 
+            text-align: center; 
+            border: 1px solid #eee; 
+            padding: 15px; 
+            border-radius: 8px; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            background: white;
+        }
+        .related-product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .related-product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 4px; margin-bottom: 10px; }
+        .related-product-card h4 { font-size: 1rem; margin: 10px 0; height: 2.4em; overflow: hidden; line-height: 1.2em; }
+        .related-product-card p { font-weight: bold; color: #555; margin: 5px 0; }
+        @media (max-width: 768px) { .related-products-grid { grid-template-columns: repeat(2, 1fr); } }
+
         footer {
             background-color: #1a1a1a;
             color: #aaa;
@@ -139,6 +157,7 @@
 
             renderProductDetails();
             renderReviews();
+            renderRelatedProducts();
         };
 
         function renderProductDetails() {
@@ -155,11 +174,42 @@
                         <button class="btn" onclick="addToCart('${product.id}')">Add to Cart</button>
                     </div>
                 </div>
+                
+                <div class="related-products-section">
+                    <h3>Related Products</h3>
+                    <div class="related-products-grid" id="related-products-list"></div>
+                </div>
+
                 <div class="reviews-section">
                     <h3>Reviews</h3>
                     <div id="reviews-list"></div>
                 </div>
             `;
+        }
+
+        function renderRelatedProducts() {
+            const relatedContainer = document.getElementById('related-products-list');
+            // 현재 상품과 같은 카테고리이면서, 현재 상품은 제외
+            let related = allProducts.filter(p => p.category === product.category && p.id !== product.id);
+            
+            // 랜덤하게 섞어서 4개 선택
+            related.sort(() => Math.random() - 0.5);
+            const selected = related.slice(0, 4);
+
+            if (selected.length === 0) {
+                document.querySelector('.related-products-section').style.display = 'none';
+                return;
+            }
+
+            relatedContainer.innerHTML = selected.map(p => `
+                <div class="related-product-card">
+                    <a href="product_detail.html?id=${p.id}" style="text-decoration: none; color: inherit;">
+                        <img src="${p.img}" alt="${p.name}">
+                        <h4>${p.name}</h4>
+                        <p>$${p.price.toLocaleString()}</p>
+                    </a>
+                </div>
+            `).join('');
         }
 
         function renderReviews() {
