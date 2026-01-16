@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Luxury Lobby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #fdfdfd;
+        }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+        nav ul { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+        nav a { color: white; text-decoration: none; font-weight: bold; transition: color 0.3s ease; }
+        nav a:hover { color: #e0c280; }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 60px 20px; }
+
+        /* 탭 스타일 */
+        .admin-tabs { display: flex; border-bottom: 2px solid #333; margin-bottom: 30px; }
+        .tab-btn {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.3s ease, background-color 0.3s ease;
+        }
+        .tab-btn.active { background-color: #333; color: white; }
+        .tab-btn:hover:not(.active) { color: #333; background-color: #f0f0f0; }
+
+        /* 테이블 스타일 */
+        .admin-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .admin-table th, .admin-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .admin-table th { background-color: #f5f5f5; font-weight: bold; }
+        .admin-table tr:hover { background-color: #fafafa; }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: white;
+        }
+        .delete-btn { background-color: #a13d3d; }
+        .delete-btn:hover { background-color: #8a3333; }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        footer { background-color: #1a1a1a; color: #aaa; text-align: center; padding: 20px; margin-top: 50px; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html" style="color: white; text-decoration: none; font-family: 'Playfair Display', serif;">Luxury Lobby Admin</a></h1>
+        <nav>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="mypage.html">My Page</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2 style="margin-bottom: 40px;">Admin Dashboard</h2>
+        
+        <div class="admin-tabs">
+            <button class="tab-btn active" onclick="showSection('users')">User Management</button>
+            <button class="tab-btn" onclick="showSection('orders')">All Orders</button>
+        </div>
+
+        <!-- 회원 관리 섹션 -->
+        <div id="users" class="section active">
+            <h3>Registered Users</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="user-list-body">
+                    <!-- JS로 사용자 목록 생성 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 전체 주문 내역 섹션 -->
+        <div id="orders" class="section">
+            <h3>All Orders</h3>
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User ID</th>
+                        <th>Date</th>
+                        <th>Items</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="order-list-body">
+                    <!-- JS로 주문 목록 생성 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026. Luxury Lobby. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // 관리자 권한 확인
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser !== 'admin') {
+            alert('Access Denied. Administrator only.');
+            location.href = 'index.html';
+        }
+
+        function logout() {
+            localStorage.removeItem('currentUser');
+            location.href = 'index.html';
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // 회원 목록 렌더링
+        function renderUsers() {
+            const tbody = document.getElementById('user-list-body');
+            tbody.innerHTML = '';
+            
+            const reservedKeys = ['currentUser', 'products', 'notices', 'qna_posts'];
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                // 시스템 키 및 데이터 키 제외
+                if (reservedKeys.includes(key)) continue;
+                if (key.startsWith('cart_') || key.startsWith('orders_') || key.startsWith('reviews_')) continue;
+
+                try {
+                    const userData = JSON.parse(localStorage.getItem(key));
+                    // 사용자 데이터 구조인지 확인 (pw, name, email 필드 존재 여부 등)
+                    if (userData && userData.email) {
+                        tbody.innerHTML += `
+                            <tr>
+                                <td>${key}</td>
+                                <td>${userData.name}</td>
+                                <td>${userData.email}</td>
+                                <td>
+                                    ${key !== 'admin' ? `<button class="action-btn delete-btn" onclick="deleteUser('${key}')">Delete</button>` : '-'}
+                                </td>
+                            </tr>
+                        `;
+                    }
+                } catch (e) { /* JSON 파싱 에러 무시 */ }
+            }
+        }
+
+        function deleteUser(userId) {
+            if (confirm(`Are you sure you want to delete user '${userId}'?`)) {
+                localStorage.removeItem(userId); // 회원 정보 삭제
+                localStorage.removeItem('cart_' + userId); // 장바구니 삭제
+                localStorage.removeItem('orders_' + userId); // 주문 내역 삭제
+                alert('User deleted.');
+                renderUsers();
+            }
+        }
+
+        // 전체 주문 내역 렌더링
+        function renderOrders() {
+            const tbody = document.getElementById('order-list-body');
+            tbody.innerHTML = '';
+            
+            const allOrders = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('orders_')) {
+                    const userId = key.replace('orders_', '');
+                    const userOrders = JSON.parse(localStorage.getItem(key));
+                    userOrders.forEach(order => {
+                        order.userId = userId;
+                        allOrders.push(order);
+                    });
+                }
+            }
+
+            // 최신순 정렬
+            allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            allOrders.forEach(order => {
+                const itemsSummary = order.items.map(item => `${item.name} (${item.quantity})`).join(', ');
+                const currentStatus = order.status || 'Completed';
+                const statusOptions = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled', 'Completed'];
+                
+                const optionsHtml = statusOptions.map(status => 
+                    `<option value="${status}" ${status === currentStatus ? 'selected' : ''}>${status}</option>`
+                ).join('');
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${order.orderId}</td>
+                        <td>${order.userId}</td>
+                        <td>${order.date}</td>
+                        <td style="max-width: 300px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${itemsSummary}">${itemsSummary}</td>
+                        <td>$${order.total.toLocaleString()}</td>
+                        <td>
+                            <select onchange="updateOrderStatus('${order.userId}', '${order.orderId}', this.value)" style="padding: 6px; border-radius: 4px; border: 1px solid #ddd; font-weight: bold; color: ${currentStatus === 'Cancelled' ? '#a13d3d' : '#28a745'};">
+                                ${optionsHtml}
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateOrderStatus(userId, orderId, newStatus) {
+            const key = 'orders_' + userId;
+            let userOrders = JSON.parse(localStorage.getItem(key)) || [];
+            
+            const orderIndex = userOrders.findIndex(o => o.orderId === orderId);
+            if (orderIndex > -1) {
+                userOrders[orderIndex].status = newStatus;
+                localStorage.setItem(key, JSON.stringify(userOrders));
+                renderOrders(); // UI 갱신
+            }
+        }
+
+        // 초기화
+        renderUsers();
+        renderOrders();
+    </script>
+</body>
+</html>

@@ -43,6 +43,8 @@
         }
         .delete-btn { background-color: #a13d3d; color: red; }
         .delete-btn:hover { background-color: #8a3333; color: white; }
+        .admin-btn { background-color: #333; color: #e0c280; border: 1px solid #e0c280; }
+        .admin-btn:hover { background-color: #e0c280; color: #333; }
         .back-link { margin-top: 20px; display: block; color: #666; text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
         .back-link:hover { color: #e0c280; }
     </style>
@@ -62,6 +64,18 @@
         if (!localStorage.getItem('currentUser')) {
             alert('This page can only be accessed by logged-in users.');
             location.href = 'index.html';
+        }
+
+        // 관리자 계정인 경우 대시보드 버튼 추가
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser === 'admin') {
+            const container = document.querySelector('.mypage-container');
+            const adminBtn = document.createElement('button');
+            adminBtn.textContent = 'Admin Dashboard';
+            adminBtn.className = 'admin-btn';
+            adminBtn.onclick = function() { location.href = 'admin.html'; };
+            // 제목(h2) 바로 다음에 추가
+            container.insertBefore(adminBtn, container.querySelector('button'));
         }
 
         function deleteAccount() {

@@ -38,7 +38,7 @@
         .container { 
             flex: 1;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             padding: 60px 20px;
         }
@@ -99,6 +99,43 @@
         }
         button:hover { background-color: #e0c280; color: #333; }
 
+        /* Q&A 게시판 스타일 */
+        .qna-section { width: 100%; max-width: 800px; margin-top: 60px; }
+        .qna-header { text-align: center; margin-bottom: 30px; }
+        .qna-table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 5px 15px rgba(0,0,0,0.05); border-radius: 8px; overflow: hidden; }
+        .qna-table th, .qna-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .qna-table th { background-color: #333; color: white; font-weight: 500; }
+        .qna-row { cursor: pointer; transition: background-color 0.2s; }
+        .qna-row:hover { background-color: #f9f9f9; }
+        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; }
+        .status-pending { background-color: #eee; color: #666; }
+        .status-answered { background-color: #e0c280; color: #333; }
+        
+        .qna-detail-row { display: none; background-color: #fdfdfd; }
+        .qna-detail-content { padding: 30px; line-height: 1.6; }
+        .qna-question { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+        .qna-answer { background-color: #f5f5f5; padding: 20px; border-radius: 8px; position: relative; }
+        .qna-answer::before { content: 'A.'; position: absolute; left: -25px; top: 0; font-weight: bold; font-size: 1.5rem; color: #e0c280; }
+        .qna-question::before { content: 'Q.'; display: inline-block; margin-right: 10px; font-weight: bold; font-size: 1.2rem; color: #333; }
+
+        .admin-reply-form { margin-top: 20px; }
+        .admin-reply-form textarea { height: 100px; margin-bottom: 10px; }
+        .lock-icon { margin-right: 5px; font-size: 0.9rem; }
+
+        /* 페이지네이션 스타일 */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .page-btn {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .page-btn:hover { background-color: #f0f0f0; }
+        .page-btn.active { background-color: #333; color: white; border-color: #333; }
+
         footer { background-color: #1a1a1a; color: #aaa; text-align: center; padding: 20px; margin-top: auto; }
     </style>
 </head>
@@ -123,6 +160,10 @@
             
             <form onsubmit="submitForm(event)">
                 <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" placeholder="Subject" required>
+                </div>
+                <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" id="name" placeholder="Your Name" required>
                 </div>
@@ -131,11 +172,45 @@
                     <input type="email" id="email" placeholder="Your Email" required>
                 </div>
                 <div class="form-group">
+                    <label>Privacy Options</label>
+                    <div style="display: flex; gap: 20px; margin-top: 10px;">
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="privacy" value="public" checked onclick="togglePasswordInput(false)" style="width: auto; margin-right: 8px;"> Public
+                        </label>
+                        <label style="display: flex; align-items: center; cursor: pointer;">
+                            <input type="radio" name="privacy" value="private" onclick="togglePasswordInput(true)" style="width: auto; margin-right: 8px;"> Private (Secret)
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group" id="password-group" style="display: none;">
+                    <label for="post-password">Password</label>
+                    <input type="password" id="post-password" placeholder="Enter password for this post">
+                </div>
+                <div class="form-group">
                     <label for="message">Message</label>
                     <textarea id="message" placeholder="How can we help you?" required></textarea>
                 </div>
                 <button type="submit">Send Message</button>
             </form>
+        </div>
+
+        <div class="qna-section">
+            <h2 class="qna-header">Q&A Board</h2>
+            <table class="qna-table">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">No.</th>
+                        <th style="width: 50%;">Title</th>
+                        <th style="width: 15%;">Author</th>
+                        <th style="width: 15%;">Date</th>
+                        <th style="width: 10%;">Status</th>
+                    </tr>
+                </thead>
+                <tbody id="qna-list-body">
+                    <!-- JS로 목록 생성 -->
+                </tbody>
+            </table>
+            <div id="qna-pagination" class="pagination"></div>
         </div>
     </div>
 
@@ -167,16 +242,164 @@
             }
         }
 
+        function togglePasswordInput(show) {
+            document.getElementById('password-group').style.display = show ? 'block' : 'none';
+            const pwInput = document.getElementById('post-password');
+            if (show) pwInput.setAttribute('required', 'required');
+            else pwInput.removeAttribute('required');
+        }
+
         function submitForm(event) {
             event.preventDefault();
+            const title = document.getElementById('title').value;
             const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            const isPrivate = document.querySelector('input[name="privacy"]:checked').value === 'private';
+            const password = isPrivate ? document.getElementById('post-password').value : null;
             
-            // 실제 서버 전송 로직 대신 알림창 표시
-            alert(`Thank you, ${name}! Your message has been sent successfully.`);
+            const newPost = {
+                id: Date.now(),
+                title: title,
+                author: name,
+                email: email,
+                content: message,
+                date: new Date().toLocaleDateString('ko-KR'),
+                isPrivate: isPrivate,
+                password: password,
+                reply: null
+            };
+
+            let posts = JSON.parse(localStorage.getItem('qna_posts')) || [];
+            posts.push(newPost);
+            localStorage.setItem('qna_posts', JSON.stringify(posts));
             
-            // 홈으로 이동
-            location.href = 'home.html';
+            alert('Your inquiry has been posted.');
+            location.reload();
         }
+
+        let currentPage = 1;
+        const itemsPerPage = 5;
+
+        // Q&A 목록 렌더링
+        function renderQnaList() {
+            const posts = JSON.parse(localStorage.getItem('qna_posts')) || [];
+            const tbody = document.getElementById('qna-list-body');
+            const paginationContainer = document.getElementById('qna-pagination');
+            
+            if (posts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; padding: 30px;">No inquiries yet.</td></tr>';
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            const reversedPosts = [...posts].reverse();
+            const totalPages = Math.ceil(reversedPosts.length / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const currentPosts = reversedPosts.slice(startIndex, startIndex + itemsPerPage);
+
+            tbody.innerHTML = currentPosts.map((post, index) => {
+                const statusBadge = post.reply 
+                    ? '<span class="status-badge status-answered">Answered</span>' 
+                    : '<span class="status-badge status-pending">Pending</span>';
+                
+                const lockIcon = post.isPrivate ? '<span class="lock-icon">🔒</span>' : '';
+                const displayIndex = reversedPosts.length - (startIndex + index);
+                
+                return `
+                    <tr class="qna-row" onclick="togglePost(${post.id})">
+                        <td>${displayIndex}</td>
+                        <td>${lockIcon}${post.title}</td>
+                        <td>${post.author}</td>
+                        <td>${post.date}</td>
+                        <td>${statusBadge}</td>
+                    </tr>
+                    <tr id="detail-${post.id}" class="qna-detail-row">
+                        <td colspan="5">
+                            <div class="qna-detail-content">
+                                <div class="qna-question">
+                                    ${post.content.replace(/\n/g, '<br>')}
+                                </div>
+                                ${post.reply ? `
+                                    <div class="qna-answer">
+                                        ${post.reply.replace(/\n/g, '<br>')}
+                                    </div>
+                                ` : ''}
+                                ${currentUser === 'admin' ? `
+                                    <div class="admin-reply-form">
+                                        <h4>Admin Reply</h4>
+                                        <textarea id="reply-${post.id}" placeholder="Write a reply...">${post.reply || ''}</textarea>
+                                        <button onclick="submitReply(${post.id})" style="width: auto; padding: 8px 20px; margin-top: 0;">${post.reply ? 'Update Reply' : 'Post Reply'}</button>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            // 페이지네이션 버튼 생성
+            let paginationHtml = '';
+            for (let i = 1; i <= totalPages; i++) {
+                const activeClass = i === currentPage ? 'active' : '';
+                paginationHtml += `<button onclick="changePage(${i})" class="page-btn ${activeClass}">${i}</button>`;
+            }
+            paginationContainer.innerHTML = paginationHtml;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            renderQnaList();
+        }
+
+        function togglePost(id) {
+            const post = (JSON.parse(localStorage.getItem('qna_posts')) || []).find(p => p.id === id);
+            const detailRow = document.getElementById(`detail-${id}`);
+            
+            // 이미 열려있으면 닫기
+            if (detailRow.style.display === 'table-row') {
+                detailRow.style.display = 'none';
+                return;
+            }
+
+            // 비밀글 체크
+            if (post.isPrivate) {
+                // 관리자이거나 본인(여기서는 비밀번호로 확인)인 경우 통과
+                if (currentUser === 'admin') {
+                    // Pass
+                } else {
+                    const inputPw = prompt('This is a secret post. Please enter the password.');
+                    if (inputPw !== post.password) {
+                        alert('Incorrect password.');
+                        return;
+                    }
+                }
+            }
+
+            // 다른 열린 행 닫기 (선택사항)
+            document.querySelectorAll('.qna-detail-row').forEach(row => row.style.display = 'none');
+            
+            // 내용 표시
+            detailRow.style.display = 'table-row';
+        }
+
+        function submitReply(id) {
+            const replyContent = document.getElementById(`reply-${id}`).value;
+            if (!replyContent) return alert('Please write a reply.');
+
+            let posts = JSON.parse(localStorage.getItem('qna_posts')) || [];
+            const postIndex = posts.findIndex(p => p.id === id);
+            
+            if (postIndex > -1) {
+                posts[postIndex].reply = replyContent;
+                localStorage.setItem('qna_posts', JSON.stringify(posts));
+                alert('Reply posted successfully.');
+                location.reload();
+            }
+        }
+
+        // 초기화
+        renderQnaList();
     </script>
 </body>
 </html>
