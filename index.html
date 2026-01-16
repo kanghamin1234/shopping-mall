@@ -218,7 +218,11 @@
         // 페이지 로드 시 상품 목록 렌더링
         window.addEventListener('DOMContentLoaded', () => {
             const productGrid = document.querySelector('.product-grid');
-            productGrid.innerHTML = products.slice(0, 8).map(p => `
+            
+            // 상품 목록을 무작위로 섞어서 8개만 선택
+            const randomProducts = [...products].sort(() => Math.random() - 0.5).slice(0, 8);
+
+            productGrid.innerHTML = randomProducts.map(p => `
                 <div class="product-card">
                     <a href="product_detail.html?id=${p.id}" style="text-decoration: none; color: inherit;">
                         <img src="${p.img}" alt="${p.name}">
