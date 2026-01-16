@@ -193,23 +193,23 @@
     <script>
         // 상품 데이터 (중앙 데이터 소스 역할)
         const products = [
-            { id: 'P001', name: 'Supreme Box Logo Hoodie', price: 650, img: "images/supremehoodie.png" },
-            { id: 'P002', name: 'Stussy Washed Jeans', price: 500, img: "images/stussy.png" },
-            { id: 'P003', name: 'Burberry Jacket', price: 5000, img: "images/burberry.png" },
-            { id: 'P004', name: 'Balenciaga Sneakers', price: 1400, img: "images/balenciagasneakers.png" },
-            { id: 'P005', name: 'Saint Laurent Handbag', price: 2500, img: "images/SaintLaurenthandbag.png"},
-            { id: 'P006', name: 'Gucci Wallet', price: 450, img: "images/gucciwallet.png" },
-            { id: 'P007', name: 'Louis Vuitton Birkin bag', price: 2900, img: "images/lvbirkin.png"},
-            { id: 'P008', name: 'Dior Shirt', price: 1250, img: "images/diorshirt.png"},
+            { id: 'P001', name: 'Supreme Box Logo Hoodie', price: 650, img: "images/supremehoodie.png", category: 'top' },
+            { id: 'P002', name: 'Stussy Washed Jeans', price: 500, img: "images/stussy.png", category: 'bottom' },
+            { id: 'P003', name: 'Burberry Jacket', price: 5000, img: "images/burberry.png", category: 'outer' },
+            { id: 'P004', name: 'Balenciaga Sneakers', price: 1400, img: "images/balenciagasneakers.png", category: 'shoes' },
+            { id: 'P005', name: 'Saint Laurent Handbag', price: 2500, img: "images/SaintLaurenthandbag.png", category: 'acc' },
+            { id: 'P006', name: 'Gucci Wallet', price: 450, img: "images/gucciwallet.png", category: 'acc' },
+            { id: 'P007', name: 'Louis Vuitton Birkin bag', price: 2900, img: "images/lvbirkin.png", category: 'acc' },
+            { id: 'P008', name: 'Dior Shirt', price: 1250, img: "images/diorshirt.png", category: 'top' },
             // 추가된 상품들 (이미지 파일이 images 폴더에 있어야 합니다)
-            { id: 'P009', name: 'Chanel Tweed Jacket', price: 4500, img: "images/chanel_jacket.png" },
-            { id: 'P010', name: 'Rolex Submariner Watch', price: 11000, img: "images/rolex_sub.png" },
-            { id: 'P011', name: 'Hermes Oran Sandals', price: 660, img: "images/hermes_sandals.png" },
-            { id: 'P012', name: 'Prada Bucket Hat', price: 450, img: "images/prada_hat.png" },
-            { id: 'P013', name: 'Cartier Love Bracelet', price: 6500, img: "images/cartier_bracelet.png" },
-            { id: 'P014', name: 'Fendi Baguette Bag', price: 2800, img: "images/fendi_bag.png" },
-            { id: 'P015', name: 'Versace Silk Shirt', price: 1200, img: "images/versace_shirt.png" },
-            { id: 'P016', name: 'Tiffany & Co. Necklace', price: 500, img: "images/tiffany_necklace.png" }
+            { id: 'P009', name: 'Chanel Tweed Jacket', price: 4500, img: "images/chanel_jacket.png", category: 'outer' },
+            { id: 'P010', name: 'Rolex Submariner Watch', price: 11000, img: "images/rolex_sub.png", category: 'acc' },
+            { id: 'P011', name: 'Hermes Oran Sandals', price: 660, img: "images/hermes_sandals.png", category: 'shoes' },
+            { id: 'P012', name: 'Prada Bucket Hat', price: 450, img: "images/prada_hat.png", category: 'acc' },
+            { id: 'P013', name: 'Cartier Love Bracelet', price: 6500, img: "images/cartier_bracelet.png", category: 'acc' },
+            { id: 'P014', name: 'Fendi Baguette Bag', price: 2800, img: "images/fendi_bag.png", category: 'acc' },
+            { id: 'P015', name: 'Versace Silk Shirt', price: 1200, img: "images/versace_shirt.png", category: 'top' },
+            { id: 'P016', name: 'Tiffany & Co. Necklace', price: 500, img: "images/tiffany_necklace.png", category: 'acc' }
         ];
 
         // 다른 페이지에서 상품 데이터를 사용할 수 있도록 로컬 스토리지에 저장
