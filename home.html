@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Menu - Luxury Lobby</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #fdfdfd;
+        }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        
+        /* 헤더 스타일 */
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #444;
+        }
+        nav ul { list-style: none; display: flex; gap: 25px; margin: 0; padding: 0; }
+        nav a { color: white; text-decoration: none; font-weight: bold; transition: color 0.3s ease; }
+        nav a:hover { color: #e0c280; }
+
+        .container { max-width: 1000px; margin: 0 auto; padding: 60px 20px; }
+
+        /* 메뉴 그리드 스타일 */
+        .home-menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .menu-item {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #333;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 180px;
+        }
+
+        .menu-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: #e0c280;
+        }
+
+        .menu-icon { font-size: 3rem; margin-bottom: 20px; }
+        .menu-item h3 { margin: 0 0 10px 0; font-size: 1.4rem; }
+        .menu-item p { color: #666; margin: 0; font-size: 0.95rem; }
+
+        /* 이벤트 배너 스타일 (전체 너비 사용) */
+        .event-banner {
+            grid-column: 1 / -1; /* 3열 전체 차지 */
+            background: linear-gradient(135deg, #e0c280, #bf9b50);
+            color: white;
+            border: none;
+        }
+        .event-banner:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(224, 194, 128, 0.4);
+        }
+        .event-banner .menu-item h3, 
+        .event-banner p { color: white; }
+        .event-banner h3 { color: white; }
+
+        footer { background-color: #1a1a1a; color: #aaa; text-align: center; padding: 20px; margin-top: 50px; }
+
+        @media (max-width: 768px) {
+            .home-menu-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1><a href="index.html" style="color: white; text-decoration: none; font-family: 'Playfair Display', serif;">Luxury Lobby</a></h1>
+        <nav>
+            <ul>
+                <li><a href="home.html" style="color: #e0c280;">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li id="mypage-link-li" style="display: none;"><a href="mypage.html">My Page</a></li>
+                <li id="cart-link-li" style="display: none;"><a href="cart.html">Cart</a></li>
+                <li><a href="login.html" id="login-link">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2 style="text-align: center; margin-bottom: 50px; font-size: 2.5rem;">Home Menu</h2>
+        
+        <div class="home-menu-grid">
+            <a href="company_info.html" class="menu-item">
+                <div class="menu-icon">🏢</div>
+                <h3>Company Info</h3>
+                <p>Learn more about Luxury Lobby</p>
+            </a>
+            <a href="notice.html" class="menu-item">
+                <div class="menu-icon">📢</div>
+                <h3>Notices</h3>
+                <p>Latest news and announcements</p>
+            </a>
+            <a href="faq.html" class="menu-item">
+                <div class="menu-icon">❓</div>
+                <h3>FAQ</h3>
+                <p>Frequently Asked Questions</p>
+            </a>
+            <a href="contact.html" class="menu-item">
+                <div class="menu-icon">📞</div>
+                <h3>Contact Us</h3>
+                <p>We are here to help you</p>
+            </a>
+            <a href="guide.html" class="menu-item">
+                <div class="menu-icon">📖</div>
+                <h3>User Guide</h3>
+                <p>How to use our services</p>
+            </a>
+            <a href="policy.html" class="menu-item">
+                <div class="menu-icon">⚖️</div>
+                <h3>Terms & Policy</h3>
+                <p>Privacy Policy and Terms of Service</p>
+            </a>
+            <a href="event.html" class="menu-item event-banner">
+                <div class="menu-icon">🎉</div>
+                <h3>Special Events</h3>
+                <p>Check out our ongoing events and promotions!</p>
+            </a>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026. Luxury Lobby. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const currentUser = localStorage.getItem('currentUser');
+        const loginLink = document.getElementById('login-link');
+        
+        if (currentUser) {
+            loginLink.textContent = 'Logout (' + currentUser + ')';
+            loginLink.href = '#';
+            document.getElementById('mypage-link-li').style.display = 'list-item';
+            document.getElementById('cart-link-li').style.display = 'list-item';
+            loginLink.onclick = function() {
+                localStorage.removeItem('currentUser');
+                alert('Logged out.');
+                location.reload();
+            };
+        }
+    </script>
+</body>
+</html>
