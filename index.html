@@ -156,6 +156,31 @@
             padding: 20px;
             margin-top: auto;
         }
+
+        /* 토스트 알림 스타일 추가 */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        .toast {
+            background-color: #333;
+            color: #e0c280; /* 골드 텍스트 */
+            padding: 15px 25px;
+            margin-top: 10px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -164,8 +189,8 @@
         <nav>
             <ul>
                 <li><a href="home.html">Home</a></li>
-                <li><a href="#" onclick="alert('This page is under construction.');">Best</a></li>
-                <li><a href="#" onclick="alert('This page is under construction.');">New Arrivals</a></li>
+                <li><a href="#" onclick="showToast('This page is under construction.');">Best</a></li>
+                <li><a href="#" onclick="showToast('This page is under construction.');">New Arrivals</a></li>
                 <li id="mypage-link-li" style="display: none;"><a href="mypage.html">My Page</a></li>
                 <li id="cart-link-li" style="display: none;"><a href="cart.html">Cart</a></li>
                 <li><a href="login.html" id="login-link">Login</a></li>
@@ -185,6 +210,9 @@
             <!-- 상품 카드가 동적으로 삽입됩니다. -->
         </div>
     </div>
+
+    <!-- 토스트 알림 컨테이너 -->
+    <div id="toast-container"></div>
 
     <footer>
         <p>&copy; 2026. Luxury Lobby. All rights reserved.</p>
@@ -247,16 +275,36 @@
             cartLinkLi.style.display = 'list-item'; // 로그인 시 Cart 버튼 표시
             loginLink.onclick = function() {
                 localStorage.removeItem('currentUser');
-                alert('Logged out.');
-                location.href = 'index.html';
+                showToast('Logged out successfully.');
+                setTimeout(() => {
+                    location.href = 'index.html';
+                }, 1000);
             };
+        }
+
+        // 토스트 알림 함수
+        function showToast(message) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            // 애니메이션을 위해 약간의 지연 후 클래스 추가
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            // 3초 후 제거
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         function addToCart(productId) {
             const currentUser = localStorage.getItem('currentUser');
             if (!currentUser) {
-                alert('Please log in to add items to your cart.');
-                location.href = 'login.html';
+                showToast('Please log in to add items to your cart.');
+                setTimeout(() => location.href = 'login.html', 1500);
                 return;
             }
             
@@ -275,7 +323,7 @@
             }
 
             localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
-            alert('Successfully added to cart!');
+            showToast('Successfully added to cart!');
         }
     </script>
 </body>
