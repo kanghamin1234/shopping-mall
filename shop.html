@@ -116,6 +116,15 @@
         .search-input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
         .search-btn { background-color: #333; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; }
         .search-btn:hover { background-color: #e0c280; color: #333; }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            cursor: pointer;
+            background-color: white;
+        }
     </style>
 </head>
 <body>
@@ -146,9 +155,18 @@
                 <button class="category-btn" onclick="setCategory('shoes')">Shoes</button>
                 <button class="category-btn" onclick="setCategory('acc')">Acc</button>
             </div>
-            <div class="search-box">
-                <input type="text" class="search-input" id="search-input" placeholder="Search..." onkeyup="if(event.key === 'Enter') searchProducts()">
-                <button class="search-btn" onclick="searchProducts()">Search</button>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <select id="sort-select" onchange="setSort(this.value)" class="sort-select">
+                    <option value="default">Default</option>
+                    <option value="price-asc">Price: Low to High</option>
+                    <option value="price-desc">Price: High to Low</option>
+                    <option value="name-asc">Name: A-Z</option>
+                    <option value="name-desc">Name: Z-A</option>
+                </select>
+                <div class="search-box">
+                    <input type="text" class="search-input" id="search-input" placeholder="Search..." onkeyup="if(event.key === 'Enter') searchProducts()">
+                    <button class="search-btn" onclick="searchProducts()">Search</button>
+                </div>
             </div>
         </div>
 
@@ -170,6 +188,7 @@
         const itemsPerPage = 20; // 한 페이지당 20개 (4x5)
         let currentPage = 1;
         let currentCategory = 'all';
+        let currentSort = 'default';
         let searchKeyword = '';
 
         // 2. 상품 데이터 가져오기
@@ -189,6 +208,12 @@
                 else btn.classList.remove('active');
             });
             
+            renderShop();
+        }
+
+        // 정렬 설정 함수
+        function setSort(sortValue) {
+            currentSort = sortValue;
             renderShop();
         }
 
@@ -215,6 +240,17 @@
                 const matchSearch = p.name.toLowerCase().includes(searchKeyword);
                 return matchCategory && matchSearch;
             });
+
+            // 2. 정렬
+            if (currentSort === 'price-asc') {
+                filteredProducts.sort((a, b) => a.price - b.price);
+            } else if (currentSort === 'price-desc') {
+                filteredProducts.sort((a, b) => b.price - a.price);
+            } else if (currentSort === 'name-asc') {
+                filteredProducts.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (currentSort === 'name-desc') {
+                filteredProducts.sort((a, b) => b.name.localeCompare(a.name));
+            }
 
             // 2. 페이지네이션 계산
             const totalItems = filteredProducts.length;
