@@ -209,6 +209,12 @@
         <div class="product-grid">
             <!-- 상품 카드가 동적으로 삽입됩니다. -->
         </div>
+
+        <!-- 최근 본 상품 섹션 추가 -->
+        <div id="recent-products-section" style="display: none; margin-top: 80px; border-top: 1px solid #eee; padding-top: 40px;">
+            <h3 style="text-align: center; margin-bottom: 30px;">👀 Recently Viewed Products</h3>
+            <div class="product-grid" id="recent-products-grid"></div>
+        </div>
     </div>
 
     <!-- 토스트 알림 컨테이너 -->
@@ -240,15 +246,18 @@
             { id: 'P016', name: 'Tiffany & Co. Necklace', price: 500, img: "images/tiffanydoubleheartnecklace.png", category: 'acc' }
         ];
 
-        // 다른 페이지에서 상품 데이터를 사용할 수 있도록 로컬 스토리지에 저장
-        localStorage.setItem('products', JSON.stringify(products));
+        // 로컬 스토리지에 상품 데이터가 없을 때만 초기화 (관리자 수정 사항 보존을 위해)
+        if (!localStorage.getItem('products')) {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
 
         // 페이지 로드 시 상품 목록 렌더링
         window.addEventListener('DOMContentLoaded', () => {
             const productGrid = document.querySelector('.product-grid');
             
             // 상품 목록을 무작위로 섞어서 8개만 선택
-            const randomProducts = [...products].sort(() => Math.random() - 0.5).slice(0, 8);
+            const allProducts = JSON.parse(localStorage.getItem('products')) || products;
+            const randomProducts = [...allProducts].sort(() => Math.random() - 0.5).slice(0, 8);
 
             productGrid.innerHTML = randomProducts.map(p => `
                 <div class="product-card">
@@ -260,6 +269,27 @@
                     <button class="btn" onclick="addToCart('${p.id}')">add to cart</button>
                 </div>
             `).join('');
+
+            // 최근 본 상품 렌더링 로직
+            const recentIds = JSON.parse(localStorage.getItem('recent_products')) || [];
+            if (recentIds.length > 0) {
+                const recentProducts = recentIds.map(id => allProducts.find(p => p.id === id)).filter(p => p);
+                
+                if (recentProducts.length > 0) {
+                    document.getElementById('recent-products-section').style.display = 'block';
+                    const recentGrid = document.getElementById('recent-products-grid');
+                    recentGrid.innerHTML = recentProducts.map(p => `
+                        <div class="product-card">
+                            <a href="product_detail.html?id=${p.id}" style="text-decoration: none; color: inherit;">
+                                <img src="${p.img}" alt="${p.name}">
+                                <h4>${p.name}</h4>
+                            </a>
+                            <p>$${p.price.toLocaleString()}</p>
+                            <button class="btn" onclick="addToCart('${p.id}')">add to cart</button>
+                        </div>
+                    `).join('');
+                }
+            }
         });
 
         // 로그인 상태 확인 및 로그아웃 기능

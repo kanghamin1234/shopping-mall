@@ -154,11 +154,25 @@
                 document.getElementById('product-detail-container').innerHTML = '<h2>Product not found.</h2>';
                 return;
             }
+            
+            // 최근 본 상품 저장
+            saveRecentProduct(productId);
 
             renderProductDetails();
             renderReviews();
             renderRelatedProducts();
         };
+
+        function saveRecentProduct(id) {
+            let recent = JSON.parse(localStorage.getItem('recent_products')) || [];
+            // 이미 목록에 있다면 제거 (최신순으로 맨 앞에 다시 넣기 위해)
+            recent = recent.filter(itemId => itemId !== id);
+            // 맨 앞에 추가
+            recent.unshift(id);
+            // 최대 4개까지만 저장
+            if (recent.length > 4) recent.pop();
+            localStorage.setItem('recent_products', JSON.stringify(recent));
+        }
 
         function renderProductDetails() {
             const container = document.getElementById('product-detail-container');
