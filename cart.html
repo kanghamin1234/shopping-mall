@@ -328,6 +328,7 @@
                 items: cart,
                 subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                 discount: currentDiscount,
+                
                 total: currentTotal,
                 couponUsed: appliedCoupon ? appliedCoupon.code : null,
                 status: 'Completed' // 주문 상태 추가
