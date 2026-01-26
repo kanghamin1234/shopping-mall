@@ -137,23 +137,8 @@
         </div>
 
         <h3 class="section-title">Ongoing Events</h3>
-        <div class="event-grid">
-            <div class="event-card" onclick="location.href='select_review_product.html'">
-                <div class="event-img-placeholder">📝</div>
-                <div class="event-info">
-                    <span class="status-badge status-ongoing">Ongoing</span>
-                    <h3>Review Event</h3>
-                    <p>Write a review for your purchased items and get a chance to win points!</p>
-                </div>
-            </div>
-            <div class="event-card" onclick="alert('This event has ended.')">
-                <div class="event-img-placeholder" style="background-color: #eee; color: #ccc;">🎁</div>
-                <div class="event-info">
-                    <span class="status-badge status-ended">Ended</span>
-                    <h3>Grand Opening Raffle</h3>
-                    <p>Thank you for participating in our opening event. Winners have been announced.</p>
-                </div>
-            </div>
+        <div class="event-grid" id="event-list-container">
+            <!-- 자바스크립트로 이벤트 목록이 생성됩니다 -->
         </div>
     </div>
 
@@ -199,6 +184,55 @@
             localStorage.setItem(couponKey, JSON.stringify(userCoupons));
             alert('Coupon downloaded successfully! (10% OFF)');
         }
+
+        // 이벤트 목록 렌더링
+        function renderEvents() {
+            const container = document.getElementById('event-list-container');
+            
+            // 초기 데이터 설정 (데이터가 없을 경우)
+            if (!localStorage.getItem('events')) {
+                const defaultEvents = [
+                    {
+                        id: 1,
+                        title: "Review Event",
+                        desc: "Write a review for your purchased items and get a chance to win points!",
+                        status: "ongoing",
+                        target: "select_review_product.html"
+                    },
+                    {
+                        id: 2,
+                        title: "Grand Opening Raffle",
+                        desc: "Thank you for participating in our opening event. Winners have been announced.",
+                        status: "ended",
+                        target: "alert:This event has ended."
+                    }
+                ];
+                localStorage.setItem('events', JSON.stringify(defaultEvents));
+            }
+
+            const events = JSON.parse(localStorage.getItem('events')) || [];
+            
+            container.innerHTML = events.map(event => {
+                const isOngoing = event.status === 'ongoing';
+                const badgeClass = isOngoing ? 'status-ongoing' : 'status-ended';
+                const icon = isOngoing ? '📝' : '🎁';
+                const iconStyle = isOngoing ? '' : 'style="background-color: #eee; color: #ccc;"';
+                const clickAction = event.target.startsWith('alert:') ? `alert('${event.target.replace('alert:', '')}')` : `location.href='${event.target}'`;
+
+                return `
+                    <div class="event-card" onclick="${clickAction}">
+                        <div class="event-img-placeholder" ${iconStyle}>${icon}</div>
+                        <div class="event-info">
+                            <span class="status-badge ${badgeClass}">${event.status}</span>
+                            <h3>${event.title}</h3>
+                            <p>${event.desc}</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        renderEvents();
     </script>
 </body>
 </html>

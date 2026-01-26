@@ -99,6 +99,8 @@
             <button class="tab-btn active" onclick="showSection('users')">User Management</button>
             <button class="tab-btn" onclick="showSection('orders')">All Orders</button>
             <button class="tab-btn" onclick="showSection('products')">Product Management</button>
+            <button class="tab-btn" onclick="showSection('events')">Event Management</button>
+            <button class="tab-btn" onclick="showSection('coupons')">Coupon Management</button>
         </div>
 
         <!-- 회원 관리 섹션 -->
@@ -179,6 +181,87 @@
                 </thead>
                 <tbody id="product-list-body">
                     <!-- JS로 상품 목록 생성 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 이벤트 관리 섹션 -->
+        <div id="events" class="section">
+            <h3>Event Management</h3>
+            <button class="action-btn" style="background-color: #333; margin-bottom: 20px; padding: 10px 20px;" onclick="showEventForm()">+ Add New Event</button>
+            
+            <!-- 이벤트 입력/수정 폼 -->
+            <div id="event-form-container" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee;">
+                <h4 id="event-form-title" style="margin-top: 0;">Add Event</h4>
+                <input type="hidden" id="event-id">
+                <div style="display: grid; grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px;">
+                    <input type="text" id="event-title" class="form-input" placeholder="Event Title">
+                    <textarea id="event-desc" class="form-input" placeholder="Description" style="height: 80px; resize: vertical; font-family: inherit;"></textarea>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <select id="event-status" class="form-input">
+                            <option value="ongoing">Ongoing</option>
+                            <option value="ended">Ended</option>
+                        </select>
+                        <input type="text" id="event-target" class="form-input" placeholder="Link URL (e.g., shop.html) or alert:Message">
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <button class="action-btn" style="background-color: #888; margin-right: 5px;" onclick="hideEventForm()">Cancel</button>
+                    <button class="action-btn" style="background-color: #333;" onclick="saveEvent()">Save Event</button>
+                </div>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Status</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="event-list-body">
+                    <!-- JS로 이벤트 목록 생성 -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 쿠폰 관리 섹션 -->
+        <div id="coupons" class="section">
+            <h3>Coupon Management</h3>
+            <button class="action-btn" style="background-color: #333; margin-bottom: 20px; padding: 10px 20px;" onclick="showCouponForm()">+ Add New Coupon</button>
+            
+            <!-- 쿠폰 입력/수정 폼 -->
+            <div id="coupon-form-container" style="display: none; background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #eee;">
+                <h4 id="coupon-form-title" style="margin-top: 0;">Add Coupon</h4>
+                <input type="hidden" id="coupon-original-code">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                    <input type="text" id="coupon-code" class="form-input" placeholder="Coupon Code (e.g., SUMMER_SALE)">
+                    <input type="text" id="coupon-desc" class="form-input" placeholder="Description">
+                    <select id="coupon-type" class="form-input">
+                        <option value="percent">Percentage (%)</option>
+                        <option value="fixed">Fixed Amount ($)</option>
+                    </select>
+                    <input type="number" id="coupon-value" class="form-input" placeholder="Discount Value">
+                </div>
+                <div style="text-align: right;">
+                    <button class="action-btn" style="background-color: #888; margin-right: 5px;" onclick="hideCouponForm()">Cancel</button>
+                    <button class="action-btn" style="background-color: #333;" onclick="saveCoupon()">Save Coupon</button>
+                </div>
+            </div>
+
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Type</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="coupon-list-body">
+                    <!-- JS로 쿠폰 목록 생성 -->
                 </tbody>
             </table>
         </div>
@@ -407,10 +490,206 @@
             }
         }
 
+        // 이벤트 관리 관련 함수
+        function renderEvents() {
+            const tbody = document.getElementById('event-list-body');
+            tbody.innerHTML = '';
+            const events = JSON.parse(localStorage.getItem('events')) || [];
+
+            events.forEach(e => {
+                const statusColor = e.status === 'ongoing' ? '#e0c280' : '#888';
+                tbody.innerHTML += `
+                    <tr>
+                        <td><span style="color: ${statusColor}; font-weight: bold; text-transform: uppercase;">${e.status}</span></td>
+                        <td>${e.title}</td>
+                        <td>${e.desc}</td>
+                        <td>
+                            <button class="action-btn" style="background-color: #555; margin-right: 5px;" onclick="editEvent(${e.id})">Edit</button>
+                            <button class="action-btn delete-btn" onclick="deleteEvent(${e.id})">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showEventForm(isEdit = false) {
+            document.getElementById('event-form-container').style.display = 'block';
+            document.getElementById('event-form-title').textContent = isEdit ? 'Edit Event' : 'Add New Event';
+            if (!isEdit) {
+                document.getElementById('event-id').value = '';
+                document.getElementById('event-title').value = '';
+                document.getElementById('event-desc').value = '';
+                document.getElementById('event-status').value = 'ongoing';
+                document.getElementById('event-target').value = '';
+            }
+        }
+
+        function hideEventForm() {
+            document.getElementById('event-form-container').style.display = 'none';
+        }
+
+        function saveEvent() {
+            const id = document.getElementById('event-id').value;
+            const title = document.getElementById('event-title').value;
+            const desc = document.getElementById('event-desc').value;
+            const status = document.getElementById('event-status').value;
+            const target = document.getElementById('event-target').value;
+
+            if (!title || !desc) {
+                alert('Please enter title and description.');
+                return;
+            }
+
+            let events = JSON.parse(localStorage.getItem('events')) || [];
+
+            if (id) {
+                const index = events.findIndex(e => e.id == id);
+                if (index > -1) events[index] = { id: Number(id), title, desc, status, target };
+            } else {
+                events.push({ id: Date.now(), title, desc, status, target });
+            }
+
+            localStorage.setItem('events', JSON.stringify(events));
+            hideEventForm();
+            renderEvents();
+            alert('Event saved.');
+        }
+
+        function editEvent(id) {
+            const events = JSON.parse(localStorage.getItem('events')) || [];
+            const event = events.find(e => e.id == id);
+            if (event) {
+                document.getElementById('event-id').value = event.id;
+                document.getElementById('event-title').value = event.title;
+                document.getElementById('event-desc').value = event.desc;
+                document.getElementById('event-status').value = event.status;
+                document.getElementById('event-target').value = event.target;
+                showEventForm(true);
+                document.getElementById('event-form-container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function deleteEvent(id) {
+            if (confirm('Are you sure you want to delete this event?')) {
+                let events = JSON.parse(localStorage.getItem('events')) || [];
+                events = events.filter(e => e.id != id);
+                localStorage.setItem('events', JSON.stringify(events));
+                renderEvents();
+            }
+        }
+
+        // 쿠폰 관리 관련 함수
+        function renderCoupons() {
+            const tbody = document.getElementById('coupon-list-body');
+            tbody.innerHTML = '';
+            
+            // 초기 데이터 설정 (데이터가 없을 경우 기본 쿠폰 생성)
+            if (!localStorage.getItem('system_coupons')) {
+                const defaultCoupons = [
+                    { code: 'WELCOME_10', type: 'percent', value: 10, desc: '10% off welcome coupon' }
+                ];
+                localStorage.setItem('system_coupons', JSON.stringify(defaultCoupons));
+            }
+
+            const coupons = JSON.parse(localStorage.getItem('system_coupons')) || [];
+
+            coupons.forEach(c => {
+                const typeLabel = c.type === 'percent' ? '%' : '$';
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight: bold;">${c.code}</td>
+                        <td>${c.type === 'percent' ? 'Percentage' : 'Fixed Amount'}</td>
+                        <td>${c.value}${typeLabel}</td>
+                        <td>${c.desc}</td>
+                        <td>
+                            <button class="action-btn" style="background-color: #555; margin-right: 5px;" onclick="editCoupon('${c.code}')">Edit</button>
+                            <button class="action-btn delete-btn" onclick="deleteCoupon('${c.code}')">Delete</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function showCouponForm(isEdit = false) {
+            document.getElementById('coupon-form-container').style.display = 'block';
+            document.getElementById('coupon-form-title').textContent = isEdit ? 'Edit Coupon' : 'Add New Coupon';
+            if (!isEdit) {
+                document.getElementById('coupon-original-code').value = '';
+                document.getElementById('coupon-code').value = '';
+                document.getElementById('coupon-desc').value = '';
+                document.getElementById('coupon-type').value = 'percent';
+                document.getElementById('coupon-value').value = '';
+                document.getElementById('coupon-code').disabled = false;
+            }
+        }
+
+        function hideCouponForm() {
+            document.getElementById('coupon-form-container').style.display = 'none';
+        }
+
+        function saveCoupon() {
+            const originalCode = document.getElementById('coupon-original-code').value;
+            const code = document.getElementById('coupon-code').value.toUpperCase();
+            const desc = document.getElementById('coupon-desc').value;
+            const type = document.getElementById('coupon-type').value;
+            const value = Number(document.getElementById('coupon-value').value);
+
+            if (!code || !desc || !value) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            let coupons = JSON.parse(localStorage.getItem('system_coupons')) || [];
+
+            if (originalCode) {
+                // 수정 (코드는 변경 불가)
+                const index = coupons.findIndex(c => c.code === originalCode);
+                if (index > -1) coupons[index] = { code: originalCode, desc, type, value };
+            } else {
+                // 추가
+                if (coupons.some(c => c.code === code)) {
+                    alert('Coupon code already exists.');
+                    return;
+                }
+                coupons.push({ code, desc, type, value });
+            }
+
+            localStorage.setItem('system_coupons', JSON.stringify(coupons));
+            hideCouponForm();
+            renderCoupons();
+            alert('Coupon saved.');
+        }
+
+        function editCoupon(code) {
+            const coupons = JSON.parse(localStorage.getItem('system_coupons')) || [];
+            const coupon = coupons.find(c => c.code === code);
+            if (coupon) {
+                document.getElementById('coupon-original-code').value = coupon.code;
+                document.getElementById('coupon-code').value = coupon.code;
+                document.getElementById('coupon-code').disabled = true; // 코드는 수정 불가
+                document.getElementById('coupon-desc').value = coupon.desc;
+                document.getElementById('coupon-type').value = coupon.type;
+                document.getElementById('coupon-value').value = coupon.value;
+                showCouponForm(true);
+                document.getElementById('coupon-form-container').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        function deleteCoupon(code) {
+            if (confirm('Are you sure you want to delete this coupon?')) {
+                let coupons = JSON.parse(localStorage.getItem('system_coupons')) || [];
+                coupons = coupons.filter(c => c.code !== code);
+                localStorage.setItem('system_coupons', JSON.stringify(coupons));
+                renderCoupons();
+            }
+        }
+
         // 초기화
         renderUsers();
         renderOrders();
         renderProducts();
+        renderEvents();
+        renderCoupons();
     </script>
 </body>
 </html>
