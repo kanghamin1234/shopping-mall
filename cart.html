@@ -53,8 +53,17 @@
             transition: color 0.3s ease;
         }
         .delete-item:hover { color: #e0c280; }
-        .cart-summary { text-align: right; margin-top: 30px; }
-        .total-price { font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; }
+        
+        /* 쿠폰 및 가격 요약 스타일 */
+        .cart-summary-container { margin-top: 30px; border-top: 2px solid #eee; padding-top: 30px; }
+        .coupon-section { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px; }
+        .coupon-input { padding: 10px; border: 1px solid #ddd; border-radius: 4px; width: 200px; font-family: 'Montserrat', sans-serif; }
+        .apply-btn { padding: 10px 20px; background-color: #555; color: white; border: none; border-radius: 4px; cursor: pointer; transition: background-color 0.3s; }
+        .apply-btn:hover { background-color: #333; }
+
+        .price-breakdown { text-align: right; font-size: 1.1rem; line-height: 1.8; color: #555; }
+        .total-price { font-size: 1.8rem; font-weight: bold; color: #333; margin-top: 10px; border-top: 1px solid #eee; padding-top: 10px; }
+        
         .order-btn {
             background-color: #333;
             color: white;
@@ -66,10 +75,24 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 20px;
+            width: 100%;
         }
         .order-btn:hover { background-color: #e0c280; color: #333; transform: translateY(-2px); }
         .empty-cart, .back-link { text-align: center; margin-top: 20px; display: block; color: #666; text-decoration: none; transition: color 0.3s ease; }
         .back-link:hover { color: #e0c280; }
+
+        /* 결제 모달 스타일 */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: white; margin: 5% auto; padding: 40px; border-radius: 8px; width: 500px; max-width: 90%; position: relative; box-shadow: 0 5px 30px rgba(0,0,0,0.3); }
+        .close-modal { position: absolute; top: 15px; right: 20px; font-size: 1.5rem; cursor: pointer; color: #aaa; }
+        .close-modal:hover { color: #333; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: bold; font-size: 0.9rem; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
+        .form-row { display: flex; gap: 15px; }
+        .checkout-submit-btn { width: 100%; padding: 15px; background-color: #333; color: white; border: none; border-radius: 4px; font-size: 1.1rem; cursor: pointer; margin-top: 10px; font-weight: bold; }
+        .checkout-submit-btn:hover { background-color: #e0c280; color: #333; }
     </style>
 </head>
 <body>
@@ -78,12 +101,22 @@
         <div id="cart-items-list">
             <!-- Cart items will be dynamically inserted here -->
         </div>
+        
         <div id="cart-summary-section" style="display: none;">
-            <div class="cart-summary">
-                <div class="total-price" id="total-price-display">Total: $0</div>
-                <button class="order-btn" onclick="checkout()">Order Now</button>
+            <div class="cart-summary-container">
+                <div class="coupon-section">
+                    <input type="text" id="coupon-code" class="coupon-input" placeholder="Coupon Code">
+                    <button class="apply-btn" onclick="applyCoupon()">Apply</button>
+                </div>
+                <div class="price-breakdown">
+                    <div>Subtotal: $<span id="subtotal-display">0</span></div>
+                    <div style="color: #a13d3d;">Discount: -$<span id="discount-display">0</span></div>
+                    <div class="total-price">Total: $<span id="total-price-display">0</span></div>
+                </div>
+                <button class="order-btn" onclick="openCheckoutModal()">Checkout</button>
             </div>
         </div>
+
         <div id="order-success" style="display: none; text-align: center; padding: 40px 0;">
             <h3 style="color: #28a745; margin-bottom: 20px;">Order Placed Successfully!</h3>
             <p style="margin-bottom: 30px;">Thank you for your purchase.</p>
@@ -93,11 +126,50 @@
         <a href="index.html" class="back-link">Continue Shopping</a>
     </div>
 
+    <!-- 결제 모달 -->
+    <div id="checkout-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeCheckoutModal()">&times;</span>
+            <h3 style="margin-top: 0; margin-bottom: 20px; text-align: center;">Secure Checkout</h3>
+            <div class="form-group">
+                <label>Shipping Address</label>
+                <input type="text" id="addr" placeholder="123 Luxury St, Beverly Hills, CA">
+            </div>
+            <div class="form-group">
+                <label>Cardholder Name</label>
+                <input type="text" id="card-name" placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" id="card-num" placeholder="0000 0000 0000 0000" maxlength="19">
+            </div>
+            <div class="form-row">
+                <div class="form-group" style="flex: 1;">
+                    <label>Expiry Date</label>
+                    <input type="text" id="card-exp" placeholder="MM/YY" maxlength="5">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>CVV</label>
+                    <input type="password" id="card-cvv" placeholder="123" maxlength="3">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Card Password (First 2 digits)</label>
+                <input type="password" id="card-pw" placeholder="**" maxlength="2">
+            </div>
+            <button class="checkout-submit-btn" onclick="processPayment()">Pay $<span id="modal-total-price">0</span></button>
+        </div>
+    </div>
+
     <script>
         const currentUser = localStorage.getItem('currentUser');
         const cartItemsList = document.getElementById('cart-items-list');
         const cartSummarySection = document.getElementById('cart-summary-section');
         const totalPriceDisplay = document.getElementById('total-price-display');
+        
+        let appliedCoupon = null;
+        let currentTotal = 0;
+        let currentDiscount = 0;
 
         window.onload = function() {
             if (!currentUser) {
@@ -139,8 +211,55 @@
                 `;
             });
 
-            totalPriceDisplay.textContent = `Total: $${total.toLocaleString()}`;
+            // 할인 계산
+            let discountAmount = 0;
+            if (appliedCoupon) {
+                if (appliedCoupon.type === 'percent') {
+                    discountAmount = total * (appliedCoupon.value / 100);
+                } else {
+                    discountAmount = appliedCoupon.value;
+                }
+                // 할인이 총액보다 크면 총액까지만 할인
+                if (discountAmount > total) discountAmount = total;
+            }
+
+            currentTotal = total - discountAmount;
+            currentDiscount = discountAmount;
+
+            document.getElementById('subtotal-display').textContent = total.toLocaleString();
+            document.getElementById('discount-display').textContent = discountAmount.toLocaleString();
+            document.getElementById('total-price-display').textContent = currentTotal.toLocaleString();
+            document.getElementById('modal-total-price').textContent = currentTotal.toLocaleString();
+            
             cartSummarySection.style.display = 'block';
+        }
+
+        function applyCoupon() {
+            const codeInput = document.getElementById('coupon-code');
+            const code = codeInput.value.trim().toUpperCase();
+            
+            if (!code) {
+                alert('Please enter a coupon code.');
+                return;
+            }
+
+            // 시스템 쿠폰 목록에서 확인
+            const systemCoupons = JSON.parse(localStorage.getItem('system_coupons')) || [];
+            const coupon = systemCoupons.find(c => c.code === code);
+
+            if (coupon) {
+                // (선택사항) 사용자가 다운로드한 쿠폰인지 확인하려면 아래 주석 해제
+                // const userCoupons = JSON.parse(localStorage.getItem('coupons_' + currentUser)) || [];
+                // if (!userCoupons.includes(code)) { alert('You do not have this coupon.'); return; }
+
+                appliedCoupon = coupon;
+                alert(`Coupon '${coupon.code}' applied! (${coupon.desc})`);
+                renderCart();
+            } else {
+                alert('Invalid coupon code.');
+                appliedCoupon = null;
+                renderCart();
+            }
         }
 
         function updateQuantity(itemId, change) {
@@ -165,19 +284,52 @@
             renderCart();
         }
 
-        function checkout() {
+        // 결제 모달 관련 함수
+        function openCheckoutModal() {
+            document.getElementById('checkout-modal').style.display = 'block';
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkout-modal').style.display = 'none';
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('checkout-modal');
+            if (event.target == modal) {
+                closeCheckoutModal();
+            }
+        }
+
+        function processPayment() {
+            // 입력값 유효성 검사 (간단하게)
+            const addr = document.getElementById('addr').value;
+            const cardNum = document.getElementById('card-num').value;
+            const cardExp = document.getElementById('card-exp').value;
+            const cardCvv = document.getElementById('card-cvv').value;
+            const cardPw = document.getElementById('card-pw').value;
+
+            if (!addr || !cardNum || !cardExp || !cardCvv || !cardPw) {
+                alert('Please fill in all payment information.');
+                return;
+            }
+
             const cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
             if (cart.length === 0) {
                 alert("Your cart is empty.");
                 return;
             }
 
+            // 주문 생성
             let orderHistory = JSON.parse(localStorage.getItem('orders_' + currentUser)) || [];
             const newOrder = {
                 orderId: 'ORD-' + new Date().getTime(),
                 date: new Date().toLocaleString('ko-KR'),
                 items: cart,
-                total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                discount: currentDiscount,
+                total: currentTotal,
+                couponUsed: appliedCoupon ? appliedCoupon.code : null,
                 status: 'Completed' // 주문 상태 추가
             };
 
@@ -185,6 +337,7 @@
             localStorage.setItem('orders_' + currentUser, JSON.stringify(orderHistory));
             localStorage.removeItem('cart_' + currentUser);
 
+            closeCheckoutModal();
             document.getElementById('cart-items-list').style.display = 'none';
             document.getElementById('cart-summary-section').style.display = 'none';
             document.querySelector('.back-link').style.display = 'none';
