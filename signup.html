@@ -88,11 +88,20 @@
                 // 이미 가입된 이메일인지 확인
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
-                    if (key === 'currentUser') continue; // 현재 로그인 세션 키 제외
-                    const storedUser = JSON.parse(localStorage.getItem(key));
-                    if (storedUser && storedUser.email === email) {
-                        alert('Email already exists.');
-                        return;
+                    // 사용자 정보가 아닌 다른 키들은 건너뜁니다.
+                    const reservedKeys = ['currentUser', 'products', 'notices', 'qna_posts', 'events', 'system_coupons', 'recent_products'];
+                    if (reservedKeys.includes(key) || key.startsWith('cart_') || key.startsWith('orders_') || key.startsWith('reviews_') || key.startsWith('coupons_')) {
+                        continue;
+                    }
+
+                    try {
+                        const storedUser = JSON.parse(localStorage.getItem(key));
+                        if (storedUser && storedUser.email === email) {
+                            alert('Email already exists.');
+                            return;
+                        }
+                    } catch (e) {
+                        // JSON 파싱 오류가 발생하는 키는 무시합니다.
                     }
                 }
 
