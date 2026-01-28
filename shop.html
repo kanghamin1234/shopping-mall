@@ -125,6 +125,33 @@
             cursor: pointer;
             background-color: white;
         }
+
+        /* 가격 슬라이더 스타일 */
+        .price-filter-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 150px;
+            height: 4px;
+            background: #ddd;
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #333;
+            border-radius: 50%;
+            transition: background .2s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover {
+            background: #e0c280;
+        }
     </style>
 </head>
 <body>
@@ -155,6 +182,12 @@
                 <button class="category-btn" onclick="setCategory('shoes')">Shoes</button>
                 <button class="category-btn" onclick="setCategory('acc')">Acc</button>
             </div>
+            
+            <div class="price-filter-container">
+                <span style="font-weight: 500; font-size: 0.9rem;">Max Price: <span id="price-display" style="font-weight: bold;">$0</span></span>
+                <input type="range" id="price-range" min="0" step="50" oninput="updatePriceFilter(this.value)">
+            </div>
+
             <div style="display: flex; gap: 10px; align-items: center;">
                 <select id="sort-select" onchange="setSort(this.value)" class="sort-select">
                     <option value="default">Default</option>
@@ -190,9 +223,18 @@
         let currentCategory = 'all';
         let currentSort = 'default';
         let searchKeyword = '';
+        let currentMaxPrice = 0; // 초기값은 데이터 로드 후 설정
 
         // 2. 상품 데이터 가져오기
-        let allProducts = JSON.parse(localStorage.getItem('products')) || [];
+        let allProductsRaw = JSON.parse(localStorage.getItem('products')) || [];
+        let allProducts = allProductsRaw.filter(p => !p.isDeleted); // 숨김 처리된 상품 제외
+
+        // 최고가 계산 및 슬라이더 초기화
+        const maxPriceInDB = allProducts.length > 0 ? Math.max(...allProducts.map(p => p.price)) : 10000;
+        currentMaxPrice = maxPriceInDB;
+        document.getElementById('price-range').max = maxPriceInDB;
+        document.getElementById('price-range').value = maxPriceInDB;
+        document.getElementById('price-display').textContent = '$' + maxPriceInDB.toLocaleString();
 
         // 초기 렌더링
         renderShop();
@@ -225,6 +267,14 @@
             renderShop();
         }
 
+        // 가격 필터 함수
+        function updatePriceFilter(value) {
+            currentMaxPrice = Number(value);
+            document.getElementById('price-display').textContent = '$' + currentMaxPrice.toLocaleString();
+            currentPage = 1;
+            renderShop();
+        }
+
         // 페이지 변경 함수
         function changePage(page) {
             currentPage = page;
@@ -234,11 +284,12 @@
 
         // 렌더링 메인 함수
         function renderShop() {
-            // 1. 필터링 (카테고리 & 검색어)
+            // 1. 필터링 (카테고리 & 검색어 & 가격)
             let filteredProducts = allProducts.filter(p => {
                 const matchCategory = currentCategory === 'all' || p.category === currentCategory;
                 const matchSearch = p.name.toLowerCase().includes(searchKeyword);
-                return matchCategory && matchSearch;
+                const matchPrice = p.price <= currentMaxPrice;
+                return matchCategory && matchSearch && matchPrice;
             });
 
             // 2. 정렬

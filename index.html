@@ -256,7 +256,8 @@
             const productGrid = document.querySelector('.product-grid');
             
             // 상품 목록을 무작위로 섞어서 8개만 선택
-            const allProducts = JSON.parse(localStorage.getItem('products')) || products;
+            let allProducts = JSON.parse(localStorage.getItem('products')) || products;
+            allProducts = allProducts.filter(p => !p.isDeleted); // 숨김 처리된 상품 제외
             const randomProducts = [...allProducts].sort(() => Math.random() - 0.5).slice(0, 8);
 
             productGrid.innerHTML = randomProducts.map(p => `

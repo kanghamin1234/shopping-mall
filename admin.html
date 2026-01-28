@@ -400,16 +400,23 @@
             const products = JSON.parse(localStorage.getItem('products')) || [];
 
             products.forEach(p => {
+                const isDeleted = p.isDeleted;
+                const rowStyle = isDeleted ? 'opacity: 0.5; background-color: #f9f9f9;' : '';
+                const namePrefix = isDeleted ? '<span style="color: #a13d3d; font-weight: bold;">[Hidden]</span> ' : '';
+
                 tbody.innerHTML += `
-                    <tr>
+                    <tr style="${rowStyle}">
                         <td>${p.id}</td>
                         <td><img src="${p.img}" alt="${p.name}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
-                        <td>${p.name}</td>
+                        <td>${namePrefix}${p.name}</td>
                         <td>$${p.price.toLocaleString()}</td>
                         <td>${p.category}</td>
                         <td>
                             <button class="action-btn" style="background-color: #555; margin-right: 5px;" onclick="editProduct('${p.id}')">Edit</button>
-                            <button class="action-btn delete-btn" onclick="deleteProduct('${p.id}')">Delete</button>
+                            ${isDeleted 
+                                ? `<button class="action-btn" style="background-color: #28a745;" onclick="restoreProduct('${p.id}')">Restore</button>`
+                                : `<button class="action-btn delete-btn" onclick="deleteProduct('${p.id}')">Hide</button>`
+                            }
                         </td>
                     </tr>
                 `;
@@ -482,11 +489,26 @@
         }
 
         function deleteProduct(id) {
-            if (confirm('Are you sure you want to delete this product?')) {
+            if (confirm('Are you sure you want to hide this product? It will not be shown in the shop.')) {
                 let products = JSON.parse(localStorage.getItem('products')) || [];
-                products = products.filter(p => p.id !== id);
-                localStorage.setItem('products', JSON.stringify(products));
-                renderProducts();
+                const index = products.findIndex(p => p.id === id);
+                if (index > -1) {
+                    products[index].isDeleted = true; // Soft delete (숨김 처리)
+                    localStorage.setItem('products', JSON.stringify(products));
+                    renderProducts();
+                }
+            }
+        }
+
+        function restoreProduct(id) {
+            if (confirm('Do you want to restore this product?')) {
+                let products = JSON.parse(localStorage.getItem('products')) || [];
+                const index = products.findIndex(p => p.id === id);
+                if (index > -1) {
+                    delete products[index].isDeleted; // 숨김 해제
+                    localStorage.setItem('products', JSON.stringify(products));
+                    renderProducts();
+                }
             }
         }
 

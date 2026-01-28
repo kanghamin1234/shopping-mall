@@ -269,7 +269,12 @@
             if (itemIndex > -1) {
                 cart[itemIndex].quantity += change;
                 if (cart[itemIndex].quantity <= 0) {
-                    cart.splice(itemIndex, 1); // Remove item if quantity is 0 or less
+                    // 수량이 0 이하가 될 때 삭제 확인
+                    if (confirm('Do you want to remove this item from your cart?')) {
+                        cart.splice(itemIndex, 1);
+                    } else {
+                        cart[itemIndex].quantity = 1; // 취소 시 수량 1로 유지
+                    }
                 }
             }
 
