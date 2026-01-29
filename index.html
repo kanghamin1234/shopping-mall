@@ -189,7 +189,7 @@
         <nav>
             <ul>
                 <li><a href="home.html">Home</a></li>
-                <li><a href="#" onclick="showToast('This page is under construction.');">Best</a></li>
+                <li><a href="best.html">Best</a></li>
                 <li><a href="#" onclick="showToast('This page is under construction.');">New Arrivals</a></li>
                 <li id="mypage-link-li" style="display: none;"><a href="mypage.html">My Page</a></li>
                 <li id="cart-link-li" style="display: none;"><a href="cart.html">Cart</a></li>
@@ -237,14 +237,25 @@
             { id: 'P008', name: 'Dior Shirt', price: 1250, img: "images/diorshirt.png", category: 'top' },
             // 추가된 상품들 (이미지 파일이 images 폴더에 있어야 합니다)
             { id: 'P009', name: 'Chanel Tweed Jacket', price: 4500, img: "images/channeltweed.png", category: 'outer' },
-            { id: 'P010', name: 'Rolex Submariner Watch', price: 11000, img: "images/rolexsubmariner.png", category: 'acc' },
+            { id: 'P010', name: 'Rolex Submariner Watch', price: 30000, img: "images/rolexsubmariner.png", category: 'acc' },
             { id: 'P011', name: 'Hermes Oran Sandals', price: 660, img: "images/hermessandals.png", category: 'shoes' },
             { id: 'P012', name: 'Prada Bucket Hat', price: 450, img: "images/pradabuckethat.png", category: 'acc' },
             { id: 'P013', name: 'Cartier Love Bracelet', price: 6500, img: "images/cartierbracelet.png", category: 'acc' },
             { id: 'P014', name: 'Fendi Baguette Bag', price: 2800, img: "images/fendibaguette.png", category: 'acc' },
             { id: 'P015', name: 'Versace Silk Shirt', price: 1200, img: "images/versacesilkshirt.png", category: 'top' },
-            { id: 'P016', name: 'Tiffany & Co. Necklace', price: 500, img: "images/tiffanydoubleheartnecklace.png", category: 'acc' }
+            { id: 'P016', name: 'Tiffany & Co. Necklace', price: 500, img: "images/tiffanydoubleheartnecklace.png", category: 'acc' },
+            // 상품 추가 틀: 아래 줄을 복사해서 사용하세요. (카테고리: top, bottom, outer, shoes, acc)
+            // { id: 'P0XX', name: '상품명', price: 0, img: "images/이미지파일명.png", category: 'acc' }
+            { id: 'P017', name: 'Chanel Tweed Jacket', price: 4500, img: "images/channeltweed.png", category: 'outer' },
+            { id: 'P018', name: 'Rolex Submariner Watch', price: 30000, img: "images/rolexsubmariner.png", category: 'acc' },
+            { id: 'P019', name: 'Hermes Oran Sandals', price: 660, img: "images/hermessandals.png", category: 'shoes' },
+            { id: 'P020', name: 'Prada Bucket Hat', price: 450, img: "images/pradabuckethat.png", category: 'acc' },
+            { id: 'P021', name: 'Cartier Love Bracelet', price: 6500, img: "images/cartierbracelet.png", category: 'acc' },
+            { id: 'P022', name: 'Fendi Baguette Bag', price: 2800, img: "images/fendibaguette.png", category: 'acc' },
+            { id: 'P023', name: 'Versace Silk Shirt', price: 1200, img: "images/versacesilkshirt.png", category: 'top' },
+            { id: 'P024', name: 'Tiffany & Co. Necklace', price: 500, img: "images/tiffanydoubleheartnecklace.png", category: 'acc' },
         ];
+
 
         // 로컬 스토리지에 상품 데이터가 없을 때만 초기화 (관리자 수정 사항 보존을 위해)
         if (!localStorage.getItem('products')) {
