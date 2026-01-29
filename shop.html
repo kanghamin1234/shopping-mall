@@ -127,31 +127,36 @@
             background-color: white;
         }
 
-        /* 가격 슬라이더 스타일 */
         .price-filter-container {
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        input[type=range] {
+        .price-input {
+            width: 70px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            -moz-appearance: textfield;
+        }
+        .price-input::-webkit-outer-spin-button,
+        .price-input::-webkit-inner-spin-button {
             -webkit-appearance: none;
-            width: 150px;
-            height: 4px;
-            background: #ddd;
-            border-radius: 2px;
-            outline: none;
+            margin: 0;
+        }
+        .price-apply-btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 16px;
-            height: 16px;
             background: #333;
-            border-radius: 50%;
-            transition: background .2s;
+            color: white;
+            transition: background-color 0.3s ease;
         }
-        input[type=range]::-webkit-slider-thumb:hover {
+        .price-apply-btn:hover {
             background: #e0c280;
+            color: #333;
         }
 
         /* 뱃지 스타일 */
@@ -207,8 +212,11 @@
             </div>
             
             <div class="price-filter-container">
-                <span style="font-weight: 500; font-size: 0.9rem;">Max Price: <span id="price-display" style="font-weight: bold;">$0</span></span>
-                <input type="range" id="price-range" min="0" step="50" oninput="updatePriceFilter(this.value)">
+                <span style="font-weight: 500; font-size: 0.9rem;">Price:</span>
+                <input type="number" id="min-price" class="price-input" placeholder="Min">
+                <span style="color: #aaa;">-</span>
+                <input type="number" id="max-price" class="price-input" placeholder="Max">
+                <button class="price-apply-btn" onclick="applyPriceFilter()">Apply</button>
             </div>
 
             <div style="display: flex; gap: 10px; align-items: center;">
@@ -246,19 +254,17 @@
         let currentCategory = 'all';
         let currentSort = 'default';
         let searchKeyword = '';
-        let currentMaxPrice = 0; // 초기값은 데이터 로드 후 설정
+        let currentMinPrice = 0;
+        let currentMaxPrice = Infinity;
 
         // 2. 상품 데이터 가져오기
         let allProductsRaw = JSON.parse(localStorage.getItem('products')) || [];
         let allProducts = allProductsRaw.filter(p => !p.isDeleted); // 숨김 처리된 상품 제외
 
-        // 최고가 계산 및 슬라이더 초기화
+        // 최고가 계산 및 placeholder 설정
         const maxPriceInDB = allProducts.length > 0 ? Math.max(...allProducts.map(p => p.price)) : 10000;
-        currentMaxPrice = maxPriceInDB;
-        document.getElementById('price-range').max = maxPriceInDB;
-        document.getElementById('price-range').value = maxPriceInDB;
-        document.getElementById('price-display').textContent = '$' + maxPriceInDB.toLocaleString();
-
+        document.getElementById('max-price').placeholder = `Max`;
+        
         // 초기 렌더링
         renderShop();
 
@@ -290,12 +296,21 @@
             renderShop();
         }
 
-        // 가격 필터 함수
-        function updatePriceFilter(value) {
-            currentMaxPrice = Number(value);
-            document.getElementById('price-display').textContent = '$' + currentMaxPrice.toLocaleString();
+        // 가격 필터 적용 함수
+        function applyPriceFilter() {
+            const minPriceInput = document.getElementById('min-price').value;
+            const maxPriceInput = document.getElementById('max-price').value;
+
+            currentMinPrice = minPriceInput ? Number(minPriceInput) : 0;
+            currentMaxPrice = maxPriceInput ? Number(maxPriceInput) : Infinity;
+
+            if (currentMinPrice > currentMaxPrice) {
+                alert("Minimum price cannot be greater than maximum price.");
+                return;
+            }
+
             currentPage = 1;
-            renderShop();
+            renderShop(); 
         }
 
         // 페이지 변경 함수
@@ -328,7 +343,7 @@
             let filteredProducts = allProducts.filter(p => {
                 const matchCategory = currentCategory === 'all' || p.category === currentCategory;
                 const matchSearch = p.name.toLowerCase().includes(searchKeyword);
-                const matchPrice = p.price <= currentMaxPrice;
+                const matchPrice = p.price >= currentMinPrice && p.price <= currentMaxPrice;
                 return matchCategory && matchSearch && matchPrice;
             });
 
