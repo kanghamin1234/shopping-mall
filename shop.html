@@ -117,17 +117,20 @@
         .search-input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
         .search-btn { background-color: #333; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; }
         .search-btn:hover { background-color: #e0c280; color: #333; }
+        .reset-btn { background-color: #888; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; transition: background-color 0.3s ease; }
+        .reset-btn:hover { background-color: #666; }
 
         .sort-select {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            font-family: 'Montserrat', sans-serif;
+            font-family: 'Montserrat', sans-serif; 
             cursor: pointer;
             background-color: white;
         }
 
         .price-filter-container {
+            
             display: flex;
             align-items: center;
             gap: 10px;
@@ -230,6 +233,7 @@
                 <div class="search-box">
                     <input type="text" class="search-input" id="search-input" placeholder="Search..." onkeyup="if(event.key === 'Enter') searchProducts()">
                     <button class="search-btn" onclick="searchProducts()">Search</button>
+                    <button class="reset-btn" onclick="resetFilters()">Reset</button>
                 </div>
             </div>
         </div>
@@ -292,6 +296,29 @@
         function searchProducts() {
             const input = document.getElementById('search-input');
             searchKeyword = input.value.trim().toLowerCase();
+            currentPage = 1;
+            renderShop();
+        }
+
+        // 필터 초기화 함수
+        function resetFilters() {
+            currentCategory = 'all';
+            currentSort = 'default';
+            searchKeyword = '';
+            currentMinPrice = 0;
+            currentMaxPrice = Infinity;
+
+            document.getElementById('search-input').value = '';
+            document.getElementById('min-price').value = '';
+            document.getElementById('max-price').value = '';
+            document.getElementById('sort-select').value = 'default';
+
+            // 카테고리 버튼 스타일 초기화
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.textContent.includes('All')) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
             currentPage = 1;
             renderShop();
         }

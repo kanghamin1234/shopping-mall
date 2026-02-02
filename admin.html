@@ -414,10 +414,11 @@
                         <td>
                             <button class="action-btn" style="background-color: #555; margin-right: 5px;" onclick="editProduct('${p.id}')">Edit</button>
                             ${isDeleted 
-                                ? `<button class="action-btn" style="background-color: #28a745;" onclick="restoreProduct('${p.id}')">Restore</button>`
+                                ? `<button class="action-btn" style="background-color: #28a745; margin-right: 5px;" onclick="restoreProduct('${p.id}')">Restore</button>
+                                   <button class="action-btn delete-btn" onclick="hardDeleteProduct('${p.id}')">Delete</button>`
                                 : `<button class="action-btn delete-btn" onclick="deleteProduct('${p.id}')">Hide</button>`
                             }
-                        </td>
+                        </td> 
                     </tr>
                 `;
             });
@@ -509,6 +510,17 @@
                     localStorage.setItem('products', JSON.stringify(products));
                     renderProducts();
                 }
+            }
+        }
+
+        function hardDeleteProduct(id) {
+            if (confirm('Are you sure you want to permanently delete this product? This action cannot be undone.')) {
+                let products = JSON.parse(localStorage.getItem('products')) || [];
+                products = products.filter(p => p.id !== id);
+                localStorage.setItem('products', JSON.stringify(products));
+                // 관련 리뷰 데이터도 함께 삭제
+                localStorage.removeItem('reviews_' + id);
+                renderProducts();
             }
         }
 
