@@ -162,6 +162,7 @@
                     </select>
                     <input type="text" id="prod-img" class="form-input" placeholder="Image Path (e.g., images/item.png)">
                 </div>
+                <textarea id="prod-desc" class="form-input" placeholder="Product Description" style="height: 100px; resize: vertical; margin-bottom: 15px; font-family: inherit;"></textarea>
                 <div style="text-align: right;">
                     <button class="action-btn" style="background-color: #888; margin-right: 5px;" onclick="hideProductForm()">Cancel</button>
                     <button class="action-btn" style="background-color: #333;" onclick="saveProduct()">Save Product</button>
@@ -434,6 +435,7 @@
                 document.getElementById('prod-price').value = '';
                 document.getElementById('prod-category').value = 'top';
                 document.getElementById('prod-img').value = '';
+                document.getElementById('prod-desc').value = '';
             }
         }
 
@@ -447,6 +449,7 @@
             const price = parseInt(document.getElementById('prod-price').value);
             const category = document.getElementById('prod-category').value;
             const img = document.getElementById('prod-img').value || 'images/default.png'; // 기본 이미지 처리
+            const desc = document.getElementById('prod-desc').value;
 
             if (!name || !price) {
                 alert('Please enter product name and price.');
@@ -459,13 +462,13 @@
                 // 수정
                 const index = products.findIndex(p => p.id === id);
                 if (index > -1) {
-                    products[index] = { id, name, price, category, img };
+                    products[index] = { ...products[index], name, price, category, img, description: desc };
                     alert('Product updated.');
                 }
             } else {
                 // 추가
                 const newId = 'P' + Date.now(); // 간단한 ID 생성
-                products.push({ id: newId, name, price, category, img });
+                products.push({ id: newId, name, price, category, img, description: desc });
                 alert('Product added.');
             }
 
@@ -483,6 +486,7 @@
                 document.getElementById('prod-price').value = product.price;
                 document.getElementById('prod-category').value = product.category;
                 document.getElementById('prod-img').value = product.img;
+                document.getElementById('prod-desc').value = product.description || '';
                 showProductForm(true);
                 // 폼으로 스크롤 이동
                 document.getElementById('product-form-container').scrollIntoView({ behavior: 'smooth' });

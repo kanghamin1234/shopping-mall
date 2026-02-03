@@ -176,6 +176,8 @@
 
         function renderProductDetails() {
             const container = document.getElementById('product-detail-container');
+            const description = product.description ? product.description.replace(/\n/g, '<br>') : 'This is a great product. High quality materials and modern design. You will love it!';
+            
             container.innerHTML = `
                 <div class="product-detail-layout">
                     <div class="product-image">
@@ -184,7 +186,7 @@
                     <div class="product-info">
                         <h2>${product.name}</h2>
                         <p class="product-price">$${product.price.toLocaleString()}</p>
-                        <p>This is a great product. High quality materials and modern design. You will love it!</p>
+                        <p>${description}</p>
                         <button class="btn" onclick="addToCart('${product.id}')">Add to Cart</button>
                     </div>
                 </div>

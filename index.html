@@ -287,7 +287,13 @@
 
         // index.html의 상품 목록을 기준으로 데이터를 갱신하거나 추가합니다.
         products.forEach(p => {
-            productMap.set(p.id, p);
+            const existing = productMap.get(p.id);
+            if (existing) {
+                // 기존 데이터가 있으면 병합 (관리자 페이지에서 추가한 description 등을 유지하기 위함)
+                productMap.set(p.id, { ...existing, ...p });
+            } else {
+                productMap.set(p.id, p);
+            }
         });
 
         const updatedProducts = Array.from(productMap.values());
