@@ -131,8 +131,9 @@
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
-        const allProducts = JSON.parse(localStorage.getItem('products')) || [];
-        const product = allProducts.find(p => p.id === productId);
+        const allProductsRaw = JSON.parse(localStorage.getItem('products')) || [];
+        const allProducts = allProductsRaw.filter(p => !p.isDeleted); // 숨김 처리된 상품 제외
+        const product = allProducts.find(p => p.id === productId); // 숨김 처리된 상품은 찾지 않음
 
         window.onload = function() {
             // Render Login/Logout status
