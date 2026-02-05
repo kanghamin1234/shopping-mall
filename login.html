@@ -59,6 +59,9 @@
         <input type="text" placeholder="ID" id="username">
         <input type="password" placeholder="Password" id="password">
         <button onclick="login()">Login</button>
+        <div class="links" style="margin-top: 15px;">
+            <a href="#" onclick="findId()">Find ID</a> | <a href="#" onclick="findPw()">Find Password</a>
+        </div>
         <div class="links">
             Don't have an account? <a href="signup.html">Sign up</a>
         </div>
@@ -85,6 +88,44 @@
             } else {
                 alert('Invalid ID or Password.');
             }
+        }
+
+        function findId() {
+            const name = prompt('Enter your Name:');
+            const email = prompt('Enter your Email:');
+            if (!name || !email) return;
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                // 시스템 키 및 데이터 키 제외
+                if (['currentUser', 'products', 'notices', 'qna_posts', 'events', 'system_coupons', 'recent_products'].includes(key) || key.startsWith('cart_') || key.startsWith('orders_') || key.startsWith('reviews_') || key.startsWith('coupons_')) continue;
+
+                try {
+                    const user = JSON.parse(localStorage.getItem(key));
+                    if (user && user.name === name && user.email === email) {
+                        alert('Your ID is: ' + key);
+                        return;
+                    }
+                } catch (e) {}
+            }
+            alert('User not found.');
+        }
+
+        function findPw() {
+            const id = prompt('Enter your ID:');
+            const name = prompt('Enter your Name:');
+            const email = prompt('Enter your Email:');
+            if (!id || !name || !email) return;
+
+            const userJson = localStorage.getItem(id);
+            if (userJson) {
+                const user = JSON.parse(userJson);
+                if (user.name === name && user.email === email) {
+                    alert('Your Password is: ' + user.pw);
+                    return;
+                }
+            }
+            alert('User information does not match.');
         }
     </script>
 </body>

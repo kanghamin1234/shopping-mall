@@ -55,7 +55,10 @@
 <body>
     <div class="signup-container">
         <h2>Sign Up</h2>
-        <input type="text" placeholder="ID" id="new-id">
+        <div style="display: flex; gap: 10px; margin: 10px 0;">
+            <input type="text" placeholder="ID" id="new-id" style="margin: 0; flex: 1;">
+            <button onclick="checkDuplicateId()" style="margin: 0; width: auto; padding: 0 15px; font-size: 0.8rem; white-space: nowrap;">Check ID</button>
+        </div>
         <input type="password" placeholder="Password" id="new-pw">
         <input type="password" placeholder="Confirm Password" id="confirm-pw">
         <div style="display: flex; gap: 10px; margin: 10px 0;">
@@ -171,6 +174,19 @@
                 document.getElementById('new-name').value = randomName;
             } else {
                 alert('Failed to generate a unique nickname. Please try again.');
+            }
+        }
+
+        function checkDuplicateId() {
+            const id = document.getElementById('new-id').value;
+            if (!id) {
+                alert('Please enter an ID.');
+                return;
+            }
+            if (localStorage.getItem(id)) {
+                alert('User ID already exists.');
+            } else {
+                alert('User ID is available.');
             }
         }
     </script>
