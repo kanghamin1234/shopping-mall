@@ -54,6 +54,11 @@
     </style>
 </head>
 <body>
+    <!-- 로딩 화면 요소 추가 -->
+    <div id="page-loader">
+        <div class="spinner"></div>
+    </div>
+
     <div class="edit-container">
         <h2>Edit My Info</h2>
         <p>Leave password fields blank if you don't want to change it.</p>
@@ -66,6 +71,18 @@
     </div>
 
     <script>
+        // 페이지 로드 시 로딩 화면 처리
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('page-loader');
+            // 0.5초 정도 보여주고 페이드아웃
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 500);
+        });
+
         const currentUserId = localStorage.getItem('currentUser');
         const nameInput = document.getElementById('edit-name');
         const emailInput = document.getElementById('edit-email');

@@ -86,9 +86,41 @@
         @media (max-width: 768px) {
             .home-menu-grid { grid-template-columns: 1fr; }
         }
+
+        /* 로딩 화면 스타일 */
+        #page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #fdfdfd;
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #eee;
+            border-top: 4px solid #333;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
+    <!-- 로딩 화면 요소 추가 -->
+    <div id="page-loader">
+        <div class="spinner"></div>
+    </div>
+
     <header>
         <h1><a href="index.html" style="color: white; text-decoration: none; font-family: 'Playfair Display', serif;">Luxury Lobby</a></h1>
         <nav>
@@ -149,6 +181,18 @@
     </footer>
 
     <script>
+        // 페이지 로드 시 로딩 화면 처리
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('page-loader');
+            // 0.5초 정도 보여주고 페이드아웃
+            setTimeout(() => {
+                loader.style.opacity = '0';
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 500);
+        });
+
         const currentUser = localStorage.getItem('currentUser');
         const loginLink = document.getElementById('login-link');
         
