@@ -58,8 +58,21 @@
         <input type="text" placeholder="ID" id="new-id">
         <input type="password" placeholder="Password" id="new-pw">
         <input type="password" placeholder="Confirm Password" id="confirm-pw">
-        <input type="text" placeholder="Name" id="new-name">
-        <input type="email" placeholder="Email" id="new-email">
+        <div style="display: flex; gap: 10px; margin: 10px 0;">
+            <input type="text" placeholder="Nickname" id="new-name" style="margin: 0; flex: 1;">
+            <button onclick="generateRandomNickname()" style="margin: 0; width: auto; padding: 0 15px; font-size: 0.8rem; white-space: nowrap;">Random Nickname</button>
+        </div>
+        <div style="display: flex; gap: 10px; margin: 10px 0;">
+            <input type="text" id="email-local" placeholder="Email ID" style="margin: 0; flex: 1;">
+            <span style="align-self: center; color: #555; font-weight: bold;">@</span>
+            <select id="email-domain" style="margin: 0; flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-family: 'Montserrat', sans-serif;">
+                <option value="gmail.com">gmail.com</option>
+                <option value="naver.com">naver.com</option>
+                <option value="daum.net">daum.net</option>
+                <option value="hotmail.com">hotmail.com</option>
+                <option value="yahoo.com">yahoo.com</option>
+            </select>
+        </div>
         <button onclick="signup()">Sign Up</button>
         <a href="login.html" class="back-link">Already have an account? Back to Login.</a>
     </div>
@@ -70,12 +83,21 @@
             const pw = document.getElementById('new-pw').value;
             const confirmPw = document.getElementById('confirm-pw').value;
             const name = document.getElementById('new-name').value;
-            const email = document.getElementById('new-email').value;
+            const emailLocal = document.getElementById('email-local').value;
+            const emailDomain = document.getElementById('email-domain').value;
+            const email = emailLocal ? emailLocal + '@' + emailDomain : '';
 
             if(id && pw && name && email) {
                 // 비밀번호 일치 여부 확인
                 if (pw !== confirmPw) {
                     alert('Passwords do not match.');
+                    return;
+                }
+
+                // 비밀번호 복잡성 검사 (대문자, 숫자, 특수문자 포함, 8자리 이상)
+                const pwRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+                if (!pwRegex.test(pw)) {
+                    alert('Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character (!@#$%^&*).');
                     return;
                 }
 
@@ -113,6 +135,42 @@
                 location.href = 'login.html';
             } else {
                 alert('Please fill in all information.');
+            }
+        }
+
+        function generateRandomNickname() {
+            const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            let isUnique = false;
+            let randomName = '';
+
+            // 기존 닉네임 수집
+            const existingNames = new Set();
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (['currentUser', 'products', 'notices', 'qna_posts', 'events', 'system_coupons', 'recent_products'].includes(key) || key.startsWith('cart_') || key.startsWith('orders_') || key.startsWith('reviews_') || key.startsWith('coupons_')) continue;
+                try {
+                    const user = JSON.parse(localStorage.getItem(key));
+                    if (user && user.name) existingNames.add(user.name);
+                } catch(e) {}
+            }
+
+            let attempts = 0;
+            while (!isUnique && attempts < 100) {
+                const length = Math.floor(Math.random() * 6) + 5; // 5~10자리
+                randomName = '';
+                for (let i = 0; i < length; i++) {
+                    randomName += chars.charAt(Math.floor(Math.random() * chars.length));
+                }
+                if (!existingNames.has(randomName)) {
+                    isUnique = true;
+                }
+                attempts++;
+            }
+
+            if (isUnique) {
+                document.getElementById('new-name').value = randomName;
+            } else {
+                alert('Failed to generate a unique nickname. Please try again.');
             }
         }
     </script>

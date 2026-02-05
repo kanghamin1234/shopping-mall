@@ -249,6 +249,12 @@
                 return;
             }
 
+            const usedCoupons = JSON.parse(localStorage.getItem('used_coupons_' + currentUser)) || [];
+            if (usedCoupons.includes(code)) {
+                alert('This coupon has already been used.');
+                return;
+            }
+
             // 시스템 쿠폰 목록에서 확인
             const systemCoupons = JSON.parse(localStorage.getItem('system_coupons')) || [];
             const coupon = systemCoupons.find(c => c.code === code);
@@ -344,6 +350,12 @@
                 couponUsed: appliedCoupon ? appliedCoupon.code : null,
                 status: 'Completed' // 주문 상태 추가
             };
+
+            if (appliedCoupon) {
+                const usedCoupons = JSON.parse(localStorage.getItem('used_coupons_' + currentUser)) || [];
+                usedCoupons.push(appliedCoupon.code);
+                localStorage.setItem('used_coupons_' + currentUser, JSON.stringify(usedCoupons));
+            }
 
             orderHistory.push(newOrder);
             localStorage.setItem('orders_' + currentUser, JSON.stringify(orderHistory));
