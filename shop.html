@@ -457,6 +457,11 @@
                 location.href = 'login.html';
                 return;
             }
+
+            if (currentUser === 'admin') {
+                alert('Administrator cannot place orders.');
+                return;
+            }
             
             // 전체 상품 목록에서 찾기
             const productToAdd = allProducts.find(p => p.id === productId);

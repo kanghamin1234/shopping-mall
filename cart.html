@@ -177,6 +177,12 @@
                 location.href = 'login.html';
                 return;
             }
+
+            if (currentUser === 'admin') {
+                alert('Administrator cannot access the shopping cart.');
+                location.href = 'admin.html';
+                return;
+            }
             renderCart();
         };
 

@@ -131,6 +131,11 @@
                 location.href = 'login.html';
                 return;
             }
+
+            if (currentUser === 'admin') {
+                alert('Administrator cannot place orders.');
+                return;
+            }
             
             let cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
             const productToAdd = allProducts.find(p => p.id === productId);

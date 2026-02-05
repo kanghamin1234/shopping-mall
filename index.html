@@ -387,6 +387,11 @@
                 setTimeout(() => location.href = 'login.html', 1500);
                 return;
             }
+
+            if (currentUser === 'admin') {
+                showToast('Administrator cannot place orders.');
+                return;
+            }
             
             // 로컬 스토리지에서 전체 상품 목록 가져오기
             const allProducts = JSON.parse(localStorage.getItem('products')) || [];
