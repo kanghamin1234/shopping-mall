@@ -108,7 +108,8 @@
                     `;
                 });
 
-                const isCancelled = order.status === 'Cancelled';
+                const currentStatus = order.status || 'Completed';
+                const isCancelled = currentStatus === 'Cancelled';
                 const orderGroupClass = isCancelled ? 'order-group cancelled' : 'order-group';
                 const headerClickHandler = isCancelled ? '' : `onclick="toggleOrderDetails('${order.orderId}')"`;
                 const orderActionHtml = isCancelled
@@ -120,6 +121,7 @@
                         <div class="order-header" ${headerClickHandler}>
                             <span>Order ID: ${order.orderId}</span>
                             <span>Date: ${order.date}</span>
+                            <span style="font-weight: bold; color: #e0c280;">${currentStatus}</span>
                             <span>Total: $${order.total.toLocaleString()}</span>
                         </div>
                         <div class="order-items-container" id="items-${order.orderId}">
