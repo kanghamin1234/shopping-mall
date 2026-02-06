@@ -273,9 +273,9 @@
             // 상품 추가 틀: 아래 줄을 복사해서 사용하세요. (카테고리: top, bottom, outer, shoes, acc)
             // { id: 'P0XX', name: '상품명', price: 0, img: "images/이미지파일명.png", category: 'acc' }
         const products = [
-            { id: 'P001', name: 'Supreme Box Logo Hoodie', price: 650, img: "images/supremehoodie.png", category: 'top' },
-            { id: 'P002', name: 'Stussy Washed Jeans', price: 400, img: "images/stussy.png", category: 'bottom' },
-            { id: 'P003', name: 'stussydown', price: 580, img: "images/stussydown.png", category: 'outer' },
+            { id: 'P001', name: 'Supreme Box Logo Hoodie', price: 650, img: "images/supremehoodie.png", category: 'top', description: "The iconic Supreme Box Logo Hoodie in heather grey. Crafted from heavyweight cotton crossgrain fleece, this hoodie features the classic red box logo embroidered on the chest. A staple piece for any streetwear collection." },
+            { id: 'P002', name: 'Stussy Washed Jeans', price: 400, img: "images/stussy.png", category: 'bottom', description: "Relaxed fit jeans from Stussy featuring a vintage washed finish. Made from durable denim with a classic 5-pocket design and Stussy logo patch on the back waist." },
+            { id: 'P003', name: 'stussydown', price: 580, img: "images/stussydown.png", category: 'outer', description: "Warm and stylish down jacket by Stussy. Features a water-resistant shell and premium down fill insulation to keep you comfortable in cold weather." },
             { id: 'P004', name: 'stussyfleece', price: 300, img: "images/stussyfleece.png", category: 'outer' },
             { id: 'P005', name: 'stussyxdenimtearsjacket', price: 800, img: "images/stussyxdenimtearsjacket.png", category: 'outer' },
             { id: 'P006', name: 'Burberry Jacket', price: 5000, img: "images/burberry.png", category: 'outer' },
@@ -335,7 +335,7 @@
             const existing = productMap.get(p.id);
             if (existing) {
                 // 기존 데이터가 있으면 병합 (관리자 페이지에서 추가한 description 등을 유지하기 위함)
-                productMap.set(p.id, { ...existing, ...p });
+                productMap.set(p.id, { ...p, ...existing });
             } else {
                 productMap.set(p.id, p);
             }
