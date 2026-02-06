@@ -232,6 +232,10 @@
                         <h2>${product.name}</h2>
                         <p class="product-price">$${product.price.toLocaleString()}</p>
                         <p>${description}</p>
+                        <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                            <label for="quantity" style="font-weight: bold;">Quantity:</label>
+                            <input type="number" id="quantity" value="1" min="1" style="width: 60px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem;">
+                        </div>
                         <button class="btn" onclick="addToCart('${product.id}')">Add to Cart</button>
                     </div>
                 </div>
@@ -309,12 +313,20 @@
                 return;
             }
 
+            const quantityInput = document.getElementById('quantity');
+            const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
+
+            if (isNaN(quantity) || quantity < 1) {
+                alert('Please enter a valid quantity.');
+                return;
+            }
+
             let cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
             const existingItem = cart.find(item => item.id === productId);
             if (existingItem) {
-                existingItem.quantity += 1;
+                existingItem.quantity += quantity;
             } else {
-                cart.push({ ...product, quantity: 1 });
+                cart.push({ ...product, quantity: quantity });
             }
             localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
             alert('Successfully added to cart!');
