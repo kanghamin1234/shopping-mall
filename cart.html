@@ -82,6 +82,18 @@
         .empty-cart, .back-link { text-align: center; margin-top: 20px; display: block; color: #666; text-decoration: none; transition: color 0.3s ease; }
         .back-link:hover { color: #e0c280; }
 
+        /* 장바구니 배지 스타일 */
+        .cart-badge {
+            background-color: #e0c280;
+            color: #333;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            vertical-align: top;
+            margin-left: 2px;
+        }
+
         /* 결제 모달 스타일 */
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
         .modal-content { background-color: white; margin: 5% auto; padding: 40px; border-radius: 8px; width: 500px; max-width: 90%; position: relative; box-shadow: 0 5px 30px rgba(0,0,0,0.3); }
@@ -228,6 +240,7 @@
                 location.href = 'admin.html';
                 return;
             }
+            updateCartCount(); // 초기 로드 시 배지 업데이트
             renderCart();
         };
 
@@ -285,6 +298,17 @@
             cartSummarySection.style.display = 'block';
         }
 
+        // 장바구니 수량 업데이트 함수
+        function updateCartCount() {
+            if (!currentUser) return;
+            const cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cart-count');
+            
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
+        }
+
         function applyCoupon() {
             const codeInput = document.getElementById('coupon-code');
             const code = codeInput.value.trim().toUpperCase();
@@ -337,6 +361,7 @@
 
             localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
             renderCart();
+            updateCartCount(); // 수량 변경 시 배지 업데이트
         }
 
         function removeFromCart(itemId) {
@@ -344,6 +369,7 @@
             const updatedCart = cart.filter(item => item.id !== itemId);
             localStorage.setItem('cart_' + currentUser, JSON.stringify(updatedCart));
             renderCart();
+            updateCartCount(); // 삭제 시 배지 업데이트
         }
 
         // 결제 모달 관련 함수
@@ -405,6 +431,7 @@
             orderHistory.push(newOrder);
             localStorage.setItem('orders_' + currentUser, JSON.stringify(orderHistory));
             localStorage.removeItem('cart_' + currentUser);
+            updateCartCount(); // 결제 완료 시 배지 업데이트 (0으로)
 
             closeCheckoutModal();
             document.getElementById('cart-items-list').style.display = 'none';
