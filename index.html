@@ -285,54 +285,52 @@
             // 상품 추가 틀: 아래 줄을 복사해서 사용하세요. (카테고리: top, bottom, outer, shoes, acc)
             // { id: 'P0XX', name: '상품명', price: 0, img: "images/이미지파일명.png", category: 'acc' }
         const products = [
-            { id: 'P001', name: 'Supreme Box Logo Hoodie', price: 650, img: "images/supremehoodie.png", category: 'top', description: "The iconic Supreme Box Logo Hoodie in heather grey. Crafted from heavyweight cotton crossgrain fleece, this hoodie features the classic red box logo embroidered on the chest. A staple piece for any streetwear collection." },
-            { id: 'P002', name: 'Stussy Washed Jeans', price: 400, img: "images/stussy.png", category: 'bottom', description: "Relaxed fit jeans from Stussy featuring a vintage washed finish. Made from durable denim with a classic 5-pocket design and Stussy logo patch on the back waist." },
-            { id: 'P003', name: 'stussydown', price: 580, img: "images/stussydown.png", category: 'outer', description: "Warm and stylish down jacket by Stussy. Features a water-resistant shell and premium down fill insulation to keep you comfortable in cold weather." },
-            { id: 'P004', name: 'stussyfleece', price: 300, img: "images/stussyfleece.png", category: 'outer' },
-            { id: 'P005', name: 'stussyxdenimtearsjacket', price: 800, img: "images/stussyxdenimtearsjacket.png", category: 'outer' },
-            { id: 'P006', name: 'Burberry Jacket', price: 5000, img: "images/burberry.png", category: 'outer' },
-            { id: 'P007', name: 'Balenciaga Sneakers', price: 1400, img: "images/balenciagasneakers.png", category: 'shoes' },
-            { id: 'P008', name: 'Saint Laurent Handbag', price: 2600, img: "images/SaintLaurenthandbag.png", category: 'acc' },
+            { id: 'P001', name: 'Supreme Box Logo Hoodie', price: 650, img: "images/supremehoodie.png", category: 'top', description: "The iconic Supreme Box Logo Hoodie in heather grey. Crafted from heavyweight cotton crossgrain fleece, this hoodie features the classic red box logo embroidered on the chest. A staple piece for any streetwear collection." }, // The iconic Supreme Box Logo Hoodie in heather grey. Crafted from heavyweight cotton crossgrain fleece, this hoodie features the classic red box logo embroidered on the chest. A staple piece for any streetwear collection.
+            { id: 'P002', name: 'Stussy Washed Jeans', price: 400, img: "images/stussy.png", category: 'bottom', description: "Relaxed fit jeans from Stussy featuring a vintage washed finish. Made from durable denim with a classic 5-pocket design and Stussy logo patch on the back waist." }, // Relaxed fit jeans from Stussy featuring a vintage washed finish. Made from durable denim with a classic 5-pocket design and Stussy logo patch on the back waist.
+            { id: 'P003', name: 'Stussy Down Jacket', price: 580, img: "images/stussydown.png", category: 'outer', description: "Warm and stylish down jacket by Stussy. Features a water-resistant shell and premium down fill insulation to keep you comfortable in cold weather." }, // Warm and stylish down jacket by Stussy. Features a water-resistant shell and premium down fill insulation to keep you comfortable in cold weather.
+            { id: 'P004', name: 'Stussy Fleece Jacket', price: 300, img: "images/stussyfleece.png", category: 'outer' }, // A Stussy fleece jacket featuring a soft texture. Great for transitional weather or as a winter inner layer, exuding Stussy's unique hip vibe.
+            { id: 'P005', name: 'Stussy x Denimtears Stadium Jacket', price: 800, img: "images/stussyxdenimtearsjacket.png", category: 'outer' }, // A collaboration jacket between Stussy and Denim Tears. Unique patterns and details make it highly collectible, representing the pinnacle of street fashion.
+            { id: 'P006', name: 'Burberry Down Jacket', price: 5000, img: "images/burberry.png", category: 'outer' }, // A classic jacket featuring Burberry's signature check pattern. A luxury outer piece that shines in formal settings with its high-quality material and precise tailoring.
+            { id: 'P007', name: 'Balenciaga Sneakers', price: 1400, img: "images/balenciagasneakers.png", category: 'shoes' }, // Sneakers embodying Balenciaga's innovative design. Chunky outsoles and unique silhouettes complete a trendy look while providing comfortable wear.
+            { id: 'P008', name: 'Saint Laurent Handbag', price: 2600, img: "images/SaintLaurenthandbag.png", category: 'acc' }, // A chic and sophisticated handbag from Saint Laurent. The YSL logo decoration is a highlight, making it a luxury item suitable for everything from daily use to evening events.
 
-            { id: 'P009', name: 'Gucci Wallet', price: 450, img: "images/gucciwallet.png", category: 'acc' },
-            { id: 'P010', name: 'Louis Vuitton Birkin bag', price: 2900, img: "images/lvbirkin.png", category: 'acc' },
-            { id: 'P011', name: 'Dior Shirt', price: 1450, img: "images/diorshirt.png", category: 'top' },
-            { id: 'P012', name: 'Chanel Tweed Jacket', price: 4500, img: "images/channeltweed.png", category: 'outer' },
-            { id: 'P013', name: 'Rolex Submariner Watch', price: 30000, img: "images/rolexsubmariner.png", category: 'acc' },
-            { id: 'P014', name: 'Hermes Oran Sandals', price: 660, img: "images/hermessandals.png", category: 'shoes' },
-            { id: 'P015', name: 'Prada Bucket Hat', price: 550, img: "images/pradabuckethat.png", category: 'acc' },
-            { id: 'P016', name: 'Cartier Love Bracelet', price: 6500, img: "images/cartierbracelet.png", category: 'acc' },
+            { id: 'P009', name: 'Gucci Wallet', price: 450, img: "images/gucciwallet.png", category: 'acc' }, // A high-end wallet featuring Gucci's signature pattern. It offers ample storage space and durability, making it a popular steady seller for gifts.
+            { id: 'P010', name: 'Louis Vuitton Birkin bag', price: 2900, img: "images/lvbirkin.png", category: 'acc' }, // A top-tier handbag imbued with Louis Vuitton's craftsmanship. It boasts an elegant design and generous storage capacity, adding dignity to any style.
+            { id: 'P011', name: 'Dior Oblique Shirt', price: 1450, img: "images/diorshirt.png", category: 'top' }, // A shirt featuring Dior's delicate details. Made with high-quality fabric for excellent comfort, it creates a clean yet luxurious mood.
+            { id: 'P012', name: 'Chanel Tweed Jacket', price: 4500, img: "images/channeltweed.png", category: 'outer' }, // Chanel's iconic tweed jacket. Synonymous with classic elegance, it is a top luxury garment that retains its value over time.
+            { id: 'P013', name: 'Rolex Submariner Watch', price: 30000, img: "images/rolexsubmariner.png", category: 'acc' }, // The Rolex Submariner is the standard for diver's watches. With outstanding waterproof function, robust durability, and timeless design, it is a dream watch for many.
+            { id: 'P014', name: 'Hermes Oran Sandals', price: 660, img: "images/hermessandals.png", category: 'shoes' }, // Hermes Oran sandals are slippers featuring the H logo cutout. With a comfortable yet luxurious design, they are perfect for summer resort looks or daily shoes.
+            { id: 'P015', name: 'Prada Bucket Hat', price: 550, img: "images/pradabuckethat.png", category: 'acc' }, // Prada's nylon bucket hat is a must-have for trendy street fashion. The lightweight and practical material combined with the Prada triangle logo creates a hip atmosphere.
+            { id: 'P016', name: 'Cartier Love Bracelet', price: 6500, img: "images/cartierbracelet.png", category: 'acc' }, // The Cartier Love Bracelet is an iconic jewelry piece symbolizing eternal love. It features a unique locking mechanism with a screwdriver and a simple yet luxurious design.
 
-            { id: 'P017', name: 'Fendi Baguette Bag', price: 2800, img: "images/fendibaguette.png", category: 'acc' },
-            { id: 'P018', name: 'Versace Silk Shirt', price: 1200, img: "images/versacesilkshirt.png", category: 'top' },
-            { id: 'P019', name: 'Tiffany & Co. Necklace', price: 600, img: "images/tiffanydoubleheartnecklace.png", category: 'acc' },
-            { id: 'P020', name: 'balenciagadenim', price: 2100, img: "images/balenciagadenim.png", category: 'outer' },
-            { id: 'P021', name: 'balenciagaracerjacket', price: 3100, img: "images/balenciagaracerjacket.png", category: 'outer' },
-            { id: 'P022', name: 'ferragamototebag', price: 2500, img: "images/ferragamototebag.png", category: 'acc' },
-            { id: 'P023', name: 'goyardcarrierbag', price: 2200, img: "images/goyardcarrierbag.png", category: 'acc' },
-            { id: 'P024', name: 'goyardminibag', price: 1500, img: "images/goyardminibag.png", category: 'acc' },
+            { id: 'P017', name: 'Fendi Baguette Bag', price: 2800, img: "images/fendibaguette.png", category: 'acc' }, // Fendi's Baguette bag is a shoulder bag style carried under the arm. The FF logo buckle is a highlight, and it comes in various materials and colors to express individuality.
+            { id: 'P018', name: 'Versace Silk Shirt', price: 1200, img: "images/versacesilkshirt.png", category: 'top' }, // A silk shirt featuring Versace's flashy baroque pattern. The soft silk material wraps around the body, revealing an intense and luxurious presence.
+            { id: 'P019', name: 'Tiffany & Co. Necklace', price: 600, img: "images/tiffanydoubleheartnecklace.png", category: 'acc' }, // Tiffany & Co.'s lovely heart pendant necklace. With a simple yet feminine design, it is great for daily jewelry and highly recommended as a gift.
+            { id: 'P020', name: 'Balenciaga Logo Denim Jacket', price: 2100, img: "images/balenciagadenim.png", category: 'outer' }, // Balenciaga's oversized denim jacket. Features vintage washing and a unique fit, allowing you to complete a stylish look just by throwing it on.
+            { id: 'P021', name: 'Balenciaga Logo Racer Jacket', price: 3100, img: "images/balenciagaracerjacket.png", category: 'outer' }, // Balenciaga's racer jacket creates a sporty yet luxurious mood. A trendy outer featuring intense color blocking and logo details.
+            { id: 'P022', name: 'Ferragamo Tote Bag', price: 2500, img: "images/ferragamototebag.png", category: 'acc' }, // Ferragamo's classic tote bag. Made with concise design and top-quality leather, it suits office looks or formal occasions well.
+            { id: 'P023', name: 'Goyard Carrier Bag', price: 2200, img: "images/goyardcarrierbag.png", category: 'acc' }, // A carrier bag featuring Goyard's iconic pattern. A luxury travel item that allows you to take care of both style and practicality when traveling.
+            { id: 'P024', name: 'Goyard Mini Bag', price: 1500, img: "images/goyardminibag.png", category: 'acc' }, // Goyard's cute mini bag. Good for use as a point item for light outings, and Goyard's unique pattern adds luxury.
 
-            { id: 'P025', name: 'goyardstlouisbag', price: 2800, img: "images/goyardstlouisbag.png", category: 'acc' },
-            { id: 'P026', name: 'goyardwallet', price: 600, img: "images/goyardwallet.png", category: 'acc' },
-            { id: 'P027', name: 'gucciripstop', price: 1800, img: "images/gucciripstop.png", category: 'outer' },
-            { id: 'P028', name: 'guccijacquard', price: 2200, img: "images/guccijacquardjacket.png", category: 'outer' },
-            { id: 'P029', name: 'guccihoodedjacket', price: 1700, img: "images/guccihoodedjacket.png", category: 'outer' },
-            { id: 'P030', name: 'margielawallet', price: 550, img: "images/margielawallet.png", category: 'acc' },
-            { id: 'P031', name: 'margielanumberring', price: 520, img: "images/margielanumberring.png", category: 'acc' },
-            { id: 'P032', name: 'margielatotebag', price: 2500, img: "images/margielatotebag.png", category: 'acc' },
+            { id: 'P025', name: 'Goyard St. Louis Bag', price: 2800, img: "images/goyardstlouisbag.png", category: 'acc' },
+            { id: 'P026', name: 'Goyard Wallet', price: 600, img: "images/goyardwallet.png", category: 'acc' }, 
+            { id: 'P027', name: 'Gucci Ripstop Jacket', price: 1800, img: "images/gucciripstop.png", category: 'outer' }, 
+            { id: 'P028', name: 'Gucci Jacquard Jacket', price: 2200, img: "images/guccijacquardjacket.png", category: 'outer' }, 
+            { id: 'P029', name: 'Gucci Hooded Jacket', price: 1700, img: "images/guccihoodedjacket.png", category: 'outer' }, 
+            { id: 'P030', name: 'Maison Margiela Wallet', price: 550, img: "images/margielawallet.png", category: 'acc' }, 
+            { id: 'P031', name: 'Maison Margiela Number Ring', price: 520, img: "images/margielanumberring.png", category: 'acc' }, 
+            { id: 'P032', name: 'Maison Margiela Tote Bag', price: 2500, img: "images/margielatotebag.png", category: 'acc' }, 
+            { id: 'P033', name: 'Polo Cotton Jacket', price: 520, img: "images/polocotton.png", category: 'outer' }, 
+            { id: 'P034', name: 'Polo Pique Shirt', price: 240, img: "images/poloshirt.png", category: 'top' }, 
+            { id: 'P035', name: 'Polo Twirl Jacket', price: 600, img: "images/polotwirl.png", category: 'outer' }, 
+            { id: 'P036', name: 'Polo Down Jacket', price: 1000, img: "images/polodown.png", category: 'outer' }, 
+            { id: 'P037', name: 'Polo Striped Shirt', price: 220, img: "images/poloshirt2.png", category: 'top'}, 
+            { id: 'P038', name: 'Polo Oxford Shirt', price: 230, img: "images/poloshirt3.png", category: 'top' }, 
+            { id: 'P039', name: 'Prada Bucket Bag', price: 2500, img: "images/pradabucketbag.png", category: 'acc' }, 
+            { id: 'P040', name: 'Off White T-Shirt', price: 540, img: "images/offwhitetee.png", category: 'top' }, 
 
-            { id: 'P033', name: 'polocotton', price: 520, img: "images/polocotton.png", category: 'outer' },
-            { id: 'P034', name: 'poloshirt', price: 240, img: "images/poloshirt.png", category: 'top' },
-            { id: 'P035', name: 'polotwirl', price: 600, img: "images/polotwirl.png", category: 'outer' },
-            { id: 'P036', name: 'polodown', price: 1000, img: "images/polodown.png", category: 'outer' },
-            { id: 'P037', name: 'poloshirt2', price: 220, img: "images/poloshirt2.png", category: 'top'},
-            { id: 'P038', name: 'poloshirt3', price: 230, img: "images/poloshirt3.png", category: 'top' },
-            { id: 'P039', name: 'pradabucketbag', price: 2500, img: "images/pradabucketbag.png", category: 'acc' },
-            { id: 'P040', name: 'offwhitetee', price: 540, img: "images/offwhitetee.png", category: 'top' },
-
-            
-            { id: 'P041', name: 'offwhite t-shirt', price: 540, img: "images/offwhitetshirt.png", category: 'top' },
-            { id: 'P042', name: 'stussyhoodie', price: 200, img: "images/stussyhoodie.png", category: 'top' }
+            { id: 'P041', name: 'Off White T-Shirt', price: 540, img: "images/offwhitetshirt.png", category: 'top' }, 
+            { id: 'P042', name: 'Stussy Logo Hoodie', price: 200, img: "images/stussyhoodie.png", category: 'top' } 
         ];
 
 
