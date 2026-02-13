@@ -184,6 +184,18 @@
             color: #333;
         }
 
+        /* 장바구니 배지 스타일 */
+        .cart-badge {
+            background-color: #e0c280;
+            color: #333;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            vertical-align: top;
+            margin-left: 2px;
+        }
+
         /* 로딩 화면 스타일 */
         #page-loader {
             position: fixed;
@@ -225,7 +237,7 @@
                 <li><a href="home.html">Home</a></li>
                 <li><a href="shop.html" style="color: #e0c280;">Shop</a></li>
                 <li id="mypage-link-li" style="display: none;"><a href="mypage.html">My Page</a></li>
-                <li id="cart-link-li" style="display: none;"><a href="cart.html">Cart</a></li>
+                <li id="cart-link-li" style="display: none;"><a href="cart.html">Cart <span id="cart-count" class="cart-badge" style="display: none;">0</span></a></li>
                 <li><a href="login.html" id="login-link">Login</a></li>
             </ul>
         </nav>
@@ -488,11 +500,23 @@
             loginLink.href = '#';
             document.getElementById('mypage-link-li').style.display = 'list-item';
             document.getElementById('cart-link-li').style.display = 'list-item';
+            updateCartCount(); // 장바구니 수량 업데이트
             loginLink.onclick = function() {
                 localStorage.removeItem('currentUser');
                 alert('Logged out.');
                 location.href = 'index.html';
             };
+        }
+
+        // 장바구니 수량 업데이트 함수
+        function updateCartCount() {
+            if (!currentUser) return;
+            const cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const badge = document.getElementById('cart-count');
+            
+            badge.textContent = count;
+            badge.style.display = count > 0 ? 'inline-block' : 'none';
         }
 
         function addToCart(productId) {
@@ -518,6 +542,7 @@
                 cart.push({ ...productToAdd, quantity: 1 });
             }
             localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
+            updateCartCount(); // 장바구니 담은 후 배지 업데이트
             alert('Successfully added to cart!');
         }
     </script>
