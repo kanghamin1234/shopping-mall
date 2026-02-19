@@ -148,6 +148,19 @@
             transform: translateY(-2px);
         }
 
+        /* 버튼 그룹 스타일 */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn-group .btn {
+            flex: 1;
+            padding: 12px 10px; /* 버튼이 두 개일 때 패딩 조정 */
+            font-size: 0.9rem;
+        }
+
+
         /* 푸터 스타일 */
         footer {
             background-color: #1a1a1a; /* 헤더와 동일하게 변경 */
@@ -233,8 +246,8 @@
         <nav>
             <ul>
                 <li><a href="home.html">Home</a></li>
-                <li><a href="best.html">Best</a></li>
-                <li><a href="#" onclick="showToast('This page is under construction.');">New Arrivals</a></li>
+                <li><a href="best.html">Best</a></li>                
+                <li><a href="new_arrivals.html">New Arrivals</a></li>
                 <li id="mypage-link-li" style="display: none;"><a href="mypage.html">My Page</a></li>
                 <li id="cart-link-li" style="display: none;"><a href="cart.html">Cart <span id="cart-count" class="cart-badge" style="display: none;">0</span></a></li>
                 <li><a href="login.html" id="login-link">Login</a></li>
@@ -370,7 +383,10 @@
                         <h4>${p.name}</h4>
                     </a>
                     <p>$${p.price.toLocaleString()}</p>
-                    <button class="btn" onclick="addToCart('${p.id}')">add to cart</button>
+                    <div class="btn-group">
+                        <button class="btn" onclick="addToCart('${p.id}')">Add to Cart</button>
+                        <button class="btn" onclick="addToWishlist('${p.id}')" style="background-color: #6c757d;">Wish</button>
+                    </div>
                 </div>
             `).join('');
 
@@ -389,7 +405,10 @@
                                 <h4>${p.name}</h4>
                             </a>
                             <p>$${p.price.toLocaleString()}</p>
-                            <button class="btn" onclick="addToCart('${p.id}')">add to cart</button>
+                            <div class="btn-group">
+                                <button class="btn" onclick="addToCart('${p.id}')">Add to Cart</button>
+                                <button class="btn" onclick="addToWishlist('${p.id}')" style="background-color: #6c757d;">Wish</button>
+                            </div>
                         </div>
                     `).join('');
                 }
@@ -476,6 +495,29 @@
             localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
             updateCartCount(); // 장바구니 담은 후 배지 업데이트
             showToast('Successfully added to cart!');
+        }
+
+        function addToWishlist(productId) {
+            const currentUser = localStorage.getItem('currentUser');
+            if (!currentUser) {
+                showToast('Please log in to use the wishlist.');
+                setTimeout(() => location.href = 'login.html', 1500);
+                return;
+            }
+
+            if (currentUser === 'admin') {
+                showToast('Administrator cannot use the wishlist.');
+                return;
+            }
+
+            let wishlist = JSON.parse(localStorage.getItem('wishlist_' + currentUser)) || [];
+            if (wishlist.includes(productId)) {
+                showToast('This item is already in your wishlist.');
+            } else {
+                wishlist.push(productId);
+                localStorage.setItem('wishlist_' + currentUser, JSON.stringify(wishlist));
+                showToast('Added to your wishlist!');
+            }
         }
     </script>
 </body>
