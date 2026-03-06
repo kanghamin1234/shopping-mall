@@ -124,6 +124,26 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* 검색창 스타일 */
+        .search-box {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        /* 모달 스타일 */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
+        .modal-content { background-color: #fefefe; margin: 10% auto; padding: 30px; border: 1px solid #888; width: 80%; max-width: 600px; border-radius: 8px; position: relative; }
+        .close-modal { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .close-modal:hover, .close-modal:focus { color: black; text-decoration: none; cursor: pointer; }
+        .order-detail-row { display: flex; justify-content: space-between; margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .order-detail-label { font-weight: bold; color: #555; }
+        .order-items-list { margin-top: 15px; background: #f9f9f9; padding: 15px; border-radius: 4px; }
+        .order-item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.95rem; }
     </style>
 </head>
 <body>
@@ -181,7 +201,8 @@
         <!-- 회원 관리 섹션 -->
         <div id="users" class="section">
             <h3>Registered Users</h3>
-            <table class="admin-table">
+            <input type="text" id="user-search" class="search-box" onkeyup="filterTable('user-search', 'user-table')" placeholder="Search by Name or Email...">
+            <table class="admin-table" id="user-table">
                 <thead>
                     <tr>
                         <th>User ID</th>
@@ -199,7 +220,8 @@
         <!-- 전체 주문 내역 섹션 -->
         <div id="orders" class="section">
             <h3>All Orders</h3>
-            <table class="admin-table">
+            <input type="text" id="order-search" class="search-box" onkeyup="filterTable('order-search', 'order-table')" placeholder="Search by Order ID or User ID...">
+            <table class="admin-table" id="order-table">
                 <thead>
                     <tr>
                         <th>Order ID</th>
@@ -244,7 +266,8 @@
                 </div>
             </div>
 
-            <table class="admin-table">
+            <input type="text" id="prod-search" class="search-box" onkeyup="filterTable('prod-search', 'prod-table')" placeholder="Search by Product Name...">
+            <table class="admin-table" id="prod-table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -341,6 +364,24 @@
                     <!-- JS로 쿠폰 목록 생성 -->
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <!-- 주문 상세 모달 -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeOrderModal()">&times;</span>
+            <h3 style="margin-top: 0; border-bottom: 2px solid #333; padding-bottom: 10px;">Order Details</h3>
+            <div id="modal-order-info">
+                <!-- JS로 상세 정보 로드 -->
+            </div>
+            <h4 style="margin-top: 20px;">Items</h4>
+            <div id="modal-order-items" class="order-items-list">
+                <!-- JS로 상품 목록 로드 -->
+            </div>
+            <div style="text-align: right; margin-top: 20px; font-size: 1.2rem; font-weight: bold;">
+                Total: <span id="modal-order-total"></span>
+            </div>
         </div>
     </div>
 
@@ -502,6 +543,7 @@
                             <select onchange="updateOrderStatus('${order.userId}', '${order.orderId}', this.value)" style="padding: 6px; border-radius: 4px; border: 1px solid #ddd; font-weight: bold; color: ${currentStatus === 'Cancelled' ? '#a13d3d' : '#28a745'}; margin-right: 5px;">
                                 ${optionsHtml}
                             </select>
+                            <button class="action-btn" style="background-color: #555; margin-right: 5px;" onclick="showOrderDetail('${order.userId}', '${order.orderId}')">View</button>
                             <button class="action-btn delete-btn" onclick="deleteOrder('${order.userId}', '${order.orderId}')">Delete</button>
                         </td>
                     </tr>
@@ -529,6 +571,54 @@
                 localStorage.setItem(key, JSON.stringify(userOrders));
                 renderOrders();
                 alert('Order deleted.');
+            }
+        }
+
+        // 주문 상세 모달 관련 함수
+        function showOrderDetail(userId, orderId) {
+            const key = 'orders_' + userId;
+            const userOrders = JSON.parse(localStorage.getItem(key)) || [];
+            const order = userOrders.find(o => o.orderId === orderId);
+
+            if (order) {
+                const infoContainer = document.getElementById('modal-order-info');
+                const itemsContainer = document.getElementById('modal-order-items');
+                
+                // 기본 정보 표시
+                infoContainer.innerHTML = `
+                    <div class="order-detail-row"><span class="order-detail-label">Order ID:</span> <span>${order.orderId}</span></div>
+                    <div class="order-detail-row"><span class="order-detail-label">User ID:</span> <span>${userId}</span></div>
+                    <div class="order-detail-row"><span class="order-detail-label">Date:</span> <span>${order.date}</span></div>
+                    <div class="order-detail-row"><span class="order-detail-label">Status:</span> <span>${order.status || 'Completed'}</span></div>
+                    <!-- 실제 구현 시 배송지 정보 등이 있다면 여기에 추가 -->
+                `;
+
+                // 상품 목록 표시
+                itemsContainer.innerHTML = '';
+                order.items.forEach(item => {
+                    itemsContainer.innerHTML += `
+                        <div class="order-item">
+                            <span>${item.name} (x${item.quantity})</span>
+                            <span>$${(item.price * item.quantity).toLocaleString()}</span>
+                        </div>
+                    `;
+                });
+
+                document.getElementById('modal-order-total').textContent = '$' + order.total.toLocaleString();
+                
+                document.getElementById('orderModal').style.display = 'block';
+            }
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+        }
+
+        // 모달 외부 클릭 시 닫기
+        window.onclick = function(event) {
+            const modal = document.getElementById('orderModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
             }
         }
 
@@ -859,6 +949,25 @@
                 coupons = coupons.filter(c => c.code !== code);
                 localStorage.setItem('system_coupons', JSON.stringify(coupons));
                 renderCoupons();
+            }
+        }
+
+        // 테이블 검색 필터링 함수
+        function filterTable(inputId, tableId) {
+            const input = document.getElementById(inputId);
+            const filter = input.value.toUpperCase();
+            const table = document.getElementById(tableId);
+            const tr = table.getElementsByTagName("tr");
+
+            // 헤더(index 0)를 제외하고 반복
+            for (let i = 1; i < tr.length; i++) {
+                // 모든 셀의 텍스트를 검사
+                const rowContent = tr[i].textContent || tr[i].innerText;
+                if (rowContent.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
             }
         }
 
