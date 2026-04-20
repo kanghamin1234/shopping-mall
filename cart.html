@@ -245,18 +245,22 @@
         };
 
         function renderCart() {
-            const cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const cartRaw = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const allProducts = JSON.parse(localStorage.getItem('products')) || [];
             cartItemsList.innerHTML = '';
             let total = 0;
 
-            if (cart.length === 0) {
+            if (cartRaw.length === 0) {
                 cartItemsList.innerHTML = '<p class="empty-cart">Your cart is empty.</p>';
                 cartSummarySection.style.display = 'none';
                 return;
             }
 
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
+            cartRaw.forEach(cartItem => {
+                const item = allProducts.find(p => p.id === cartItem.id);
+                if (!item || item.isDeleted) return; // 삭제된 상품 제외
+
+                const itemTotal = item.price * cartItem.quantity;
                 total += itemTotal;
                 cartItemsList.innerHTML += `
                     <div class="cart-item">
@@ -264,13 +268,13 @@
                         <div class="item-details">
                             <h4>${item.name}</h4>
                             <div class="quantity-controls">
-                                <button onclick="updateQuantity('${item.id}', -1)">-</button>
-                                <span>${item.quantity}</span>
-                                <button onclick="updateQuantity('${item.id}', 1)">+</button>
+                                <button onclick="updateQuantity('${cartItem.id}', -1)">-</button>
+                                <span>${cartItem.quantity}</span>
+                                <button onclick="updateQuantity('${cartItem.id}', 1)">+</button>
                             </div>
                         </div>
                         <div class="item-price">$${itemTotal.toLocaleString()}</div>
-                        <button class="delete-item" onclick="removeFromCart('${item.id}')">&times;</button>
+                        <button class="delete-item" onclick="removeFromCart('${cartItem.id}')">&times;</button>
                     </div>
                 `;
             });
@@ -402,8 +406,21 @@
                 return;
             }
 
-            const cart = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
-            if (cart.length === 0) {
+            // 간단한 카드 번호 유효성 검사 (숫자와 공백만 허용)
+            const cardRegex = /^[\d\s]{13,19}$/;
+            if (!cardRegex.test(cardNum)) {
+                alert('Please enter a valid card number.');
+                return;
+            }
+
+            const cartRaw = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
+            const allProducts = JSON.parse(localStorage.getItem('products')) || [];
+            const cartWithDetails = cartRaw.map(ci => {
+                const p = allProducts.find(prod => prod.prodId === ci.id);
+                return { ...p, ...ci };
+            });
+
+            if (cartRaw.length === 0) {
                 alert("Your cart is empty.");
                 return;
             }
@@ -413,8 +430,8 @@
             const newOrder = {
                 orderId: 'ORD-' + new Date().getTime(),
                 date: new Date().toLocaleString('ko-KR'),
-                items: cart,
-                subtotal: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                items: cartWithDetails,
+                subtotal: cartWithDetails.reduce((sum, item) => sum + (item.price * item.quantity), 0),
                 discount: currentDiscount,
                 
                 total: currentTotal,

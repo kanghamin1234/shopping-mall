@@ -413,7 +413,7 @@
             if (existingItem) {
                 existingItem.quantity += quantity;
             } else {
-                cart.push({ ...product, quantity: quantity });
+                cart.push({ id: productId, quantity: quantity });
             }
             localStorage.setItem('cart_' + currentUser, JSON.stringify(cart));
             updateCartCount(); // 장바구니 담은 후 배지 업데이트
