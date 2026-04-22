@@ -34,6 +34,20 @@
             border-color: #e0c280;
             box-shadow: 0 0 0 2px rgba(224, 194, 128, 0.2);
         }
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .password-wrapper input { margin: 0; }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+        }
         button {
             width: 100%;
             padding: 12px;
@@ -89,7 +103,10 @@
     <div class="login-container">
         <h2>Login</h2>
         <input type="text" placeholder="ID" id="username">
-        <input type="password" placeholder="Password" id="password">
+        <div class="password-wrapper">
+            <input type="password" placeholder="Password" id="password">
+            <span class="toggle-password" onclick="togglePassword('password', this)">👁️</span>
+        </div>
         <button onclick="login()">Login</button>
         <div class="links" style="margin-top: 15px;">
             <a href="#" onclick="findId()">Find ID</a> | <a href="#" onclick="findPw()">Find Password</a>
@@ -170,6 +187,17 @@
                 }
             }
             alert('User information does not match.');
+        }
+
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.textContent = "🙈";
+            } else {
+                input.type = "password";
+                icon.textContent = "👁️";
+            }
         }
     </script>
 </body>

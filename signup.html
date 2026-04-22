@@ -34,6 +34,20 @@
             border-color: #e0c280;
             box-shadow: 0 0 0 2px rgba(224, 194, 128, 0.2);
         }
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 10px 0;
+        }
+        .password-wrapper input { margin: 0; }
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            user-select: none;
+        }
         button {
             width: 100%;
             padding: 12px;
@@ -64,8 +78,16 @@
             <input type="text" placeholder="ID" id="new-id" style="margin: 0; flex: 1;">
             <button onclick="checkDuplicateId()" style="margin: 0; width: auto; padding: 0 15px; font-size: 0.8rem; white-space: nowrap;">Check ID</button>
         </div>
-        <input type="password" placeholder="Password" id="new-pw">
-        <input type="password" placeholder="Confirm Password" id="confirm-pw">
+        <div class="password-wrapper">
+            <input type="password" placeholder="Password" id="new-pw" oninput="validatePassword()">
+            <span class="toggle-password" onclick="togglePassword('new-pw', this)">👁️</span>
+        </div>
+        <span id="pw-msg" class="pw-msg"></span>
+        <div class="password-wrapper">
+            <input type="password" placeholder="Confirm Password" id="confirm-pw" oninput="validatePassword()">
+            <span class="toggle-password" onclick="togglePassword('confirm-pw', this)">👁️</span>
+        </div>
+        <span id="confirm-pw-msg" class="pw-msg"></span>
         <div style="display: flex; gap: 10px; margin: 10px 0;">
             <input type="text" placeholder="Nickname" id="new-name" style="margin: 0; flex: 1;">
             <button onclick="generateRandomNickname()" style="margin: 0; width: auto; padding: 0 15px; font-size: 0.8rem; white-space: nowrap;">Random Nickname</button>
@@ -204,6 +226,49 @@
                 alert('User ID already exists.');
             } else {
                 alert('User ID is available.');
+            }
+        }
+
+        function validatePassword() {
+            const pw = document.getElementById('new-pw').value;
+            const confirmPw = document.getElementById('confirm-pw').value;
+            const pwMsgEl = document.getElementById('pw-msg');
+            const confirmMsgEl = document.getElementById('confirm-pw-msg');
+            
+            // 비밀번호 복잡성 검사 정규식 (8자 이상, 대문자, 숫자, 특수문자 포함)
+            const pwRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{8,}$/;
+            
+            if (!pw) {
+                pwMsgEl.textContent = '';
+                pwMsgEl.className = 'pw-msg';
+            } else if (pwRegex.test(pw)) {
+                pwMsgEl.textContent = 'Password meets criteria.';
+                pwMsgEl.className = 'pw-msg msg-valid';
+            } else {
+                pwMsgEl.textContent = '8+ chars, A-Z, 0-9, !@#$%^&* required.';
+                pwMsgEl.className = 'pw-msg msg-invalid';
+            }
+
+            // 비밀번호 일치 여부 검사
+            if (!confirmPw) {
+                confirmMsgEl.textContent = '';
+            } else if (pw === confirmPw) {
+                confirmMsgEl.textContent = 'Passwords match.';
+                confirmMsgEl.className = 'pw-msg msg-valid';
+            } else {
+                confirmMsgEl.textContent = 'Passwords do not match.';
+                confirmMsgEl.className = 'pw-msg msg-invalid';
+            }
+        }
+
+        function togglePassword(inputId, icon) {
+            const input = document.getElementById(inputId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.textContent = "🙈";
+            } else {
+                input.type = "password";
+                icon.textContent = "👁️";
             }
         }
     </script>
