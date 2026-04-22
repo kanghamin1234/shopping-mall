@@ -416,7 +416,7 @@
             const cartRaw = JSON.parse(localStorage.getItem('cart_' + currentUser)) || [];
             const allProducts = JSON.parse(localStorage.getItem('products')) || [];
             const cartWithDetails = cartRaw.map(ci => {
-                const p = allProducts.find(prod => prod.prodId === ci.id);
+                const p = allProducts.find(prod => prod.id === ci.id);
                 return { ...p, ...ci };
             });
 
